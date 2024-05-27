@@ -1,0 +1,92 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Card from "../components/Card.astro";
+import HeroCard from "../components/HeroCard.astro";
+---
+
+<Layout title="dayangrah.am">
+  <div class="flex flex-col items-center text-black bg-background">
+    <HeroCard class="my-8" />
+    <section title="stuff i've built" class="flex-col gap-4 mt-8">
+      <h2 class="text-sm text-textcolor mb-2">some stuff i've built</h2>
+      <div class="flex gap-4">
+        <Card
+          title="magic table"
+          body="Description of project 1..."
+          href="/projects/project-1"
+        />
+        <Card
+          title="live-template"
+          body="Description of project 3..."
+          href="/projects/project-3"
+        />
+        <Card
+          title="sendwiz"
+          body="Description of project 2..."
+          href="/projects/project-2"
+        />
+        <p class="text-textcolor group self-end text-sm">
+          more... <span class="group-hover:ml-2 transition-all duration-300"
+            >&rarr;</span
+          >
+        </p>
+      </div>
+    </section>
+    <section title="stuff i've thought about" class="flex-col gap-4 mt-8">
+      <h2 class="text-sm text-textcolor mb-2">some stuff i've thought about</h2>
+      <div class="flex gap-4">
+        <Card
+          title="on runescape"
+          body="greatest mmorpg"
+          href="/projects/project-1"
+        />
+        <Card
+          title="on suffering"
+          body="is it necessary for greatness?"
+          href="/projects/project-2"
+        />
+        <Card
+          title="on stack procrastination"
+          body="muh new framework"
+          href="/projects/project-3"
+        />
+        <p class="text-textcolor group self-end text-sm">
+          more... <span class="group-hover:ml-2 transition-all duration-300"
+            >&rarr;</span
+          >
+        </p>
+      </div>
+    </section>
+    <section title="stuff i wanna learn" class="flex-col gap-4 mt-8">
+      <h2 class="text-sm text-textcolor mb-2">some stuff i wanna learn</h2>
+      <div class="flex gap-4">
+        <Card
+          title="on concurrency"
+          body="too much stuff"
+          href="/projects/project-1"
+        />
+        <Card
+          title="on laravel"
+          body="productivity"
+          href="/projects/project-2"
+        />
+        <Card
+          title="on stack procrastination"
+          body="muh new framework"
+          href="/projects/project-3"
+        />
+        <p class="text-textcolor group self-end text-sm">
+          more... <span class="group-hover:ml-2 transition-all duration-300"
+            >&rarr;</span
+          >
+        </p>
+      </div>
+    </section>
+  </div>
+
+  <style>
+    main {
+      margin: auto;
+    }
+  </style>
+</Layout>

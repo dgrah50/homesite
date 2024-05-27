@@ -1,0 +1,20 @@
+---
+import { Image } from "astro:assets";
+import faceImage from "../../public/dayangraham.png";
+
+const { class: className } = Astro.props;
+---
+
+<div class="w-96 flex flex-col items-center">
+  <div>
+    <Image
+      class:list={["w-48 h-48 rounded-full object-cover mb-4", className]}
+      src={faceImage}
+      alt={`Dayan Graham's animated face`}
+    />
+  </div>
+  <h2 class="text-textcolor mb-1">dayan graham</h2>
+  <p class="text-textcolor text-xs text-right">
+    pronounced /ˈdeɪɪ(j)ən . ɡreɪəm/
+  </p>
+</div>
