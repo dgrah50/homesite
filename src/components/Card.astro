@@ -9,29 +9,27 @@ const { href, title, body } = Astro.props;
 ---
 
 <li
-  class="group rounded-lg shadow-sm hover:shadow-lg border border-border list-none p-2 text-textcolor hover:border-primary hover:text-white transition-all duration-500"
+  class="group w-52 rounded-lg shadow-sm hover:shadow-lg border border-border list-none p-2 text-textcolor hover:border-primary hover:text-white transition-all duration-500"
   style="background-color: #1c1c1c"
 >
   <a href={href}>
-    <h5 class="text-sm">
+    <h5 class="text-sm text-subheadingcolor mb-0">
       {title}
       <span class="group-hover:ml-2 transition-all duration-300">&rarr;</span>
     </h5>
-    <p class="text-xs">
+    <p class="text-xs text-descriptioncolor text-wrap">
       {body}
     </p>
   </a>
 </li>
 <style>
   .link-card {
-  }
-  h2 {
     margin: 0;
     font-size: 1.25rem;
     transition: color 0.6s cubic-bezier(0.22, 1, 0.36, 1);
   }
   p {
-    margin-top: 0.5rem;
+    margin-top: 0.25rem;
     margin-bottom: 0;
   }
   .link-card:is(:hover, :focus-within) {
