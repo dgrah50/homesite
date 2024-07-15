@@ -1,4 +1,5 @@
 ---
+layout: ../../layouts/BlogLayout.astro
 title: "Contributions to OpenReplay"
 technologies: ["JavaScript", "TypeScript", "Open Source"]
 ---

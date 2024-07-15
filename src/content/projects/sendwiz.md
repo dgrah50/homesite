@@ -1,4 +1,5 @@
 ---
+layout: ../../layouts/BlogLayout.astro
 title: "Sendwiz"
 technologies: ["Swift", "iOS", "Node.js", "Express"]
 ---

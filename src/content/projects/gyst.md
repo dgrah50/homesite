@@ -1,4 +1,5 @@
 ---
+layout: ../../layouts/BlogLayout.astro
 title: "Gyst"
 technologies: ["JavaScript", "Chrome Extension", "Productivity"]
 ---

@@ -1,4 +1,5 @@
 ---
+layout: ../../layouts/BlogLayout.astro
 title: "F# eCommerce Site"
 technologies: ["F#", "React", "Redux", "MongoDB"]
 ---

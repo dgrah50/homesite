@@ -1,4 +1,5 @@
 ---
+layout: ../../layouts/BlogLayout.astro
 title: "Speech2Speech Summarizer"
 technologies: ["Python", "Machine Learning", "NLP"]
 ---

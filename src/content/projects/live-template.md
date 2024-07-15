@@ -1,4 +1,5 @@
 ---
+layout: ../../layouts/BlogLayout.astro
 title: "Live Template"
 technologies: ["Node.js", "CLI", "React"]
 ---

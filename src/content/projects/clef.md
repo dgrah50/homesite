@@ -1,4 +1,5 @@
 ---
+layout: ../../layouts/BlogLayout.astro
 title: "Clef"
 technologies: ["Webflow", "Flutter"]
 ---

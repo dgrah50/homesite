@@ -1,4 +1,5 @@
 ---
+layout: ../../layouts/BlogLayout.astro
 title: "BikeSafe"
 technologies: ["C++", "Arduino", "GSM", "GPS", "Accelerometer"]
 ---

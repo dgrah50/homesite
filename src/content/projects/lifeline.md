@@ -1,4 +1,5 @@
 ---
+layout: ../../layouts/BlogLayout.astro
 title: "LifeLine"
 technologies: ["JavaScript", "HTML", "CSS", "Python"]
 ---

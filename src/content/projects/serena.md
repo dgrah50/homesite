@@ -1,4 +1,5 @@
 ---
+layout: ../../layouts/BlogLayout.astro
 title: "Serena"
 technologies: ["React Native", "Node.js"]
 ---

@@ -1,4 +1,5 @@
 ---
+layout: ../../layouts/BlogLayout.astro
 title: "EEERover"
 technologies: ["C++", "Arduino", "ESP8266", "Custom PCB"]
 ---
