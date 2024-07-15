@@ -1,0 +1,81 @@
+/* Tailwind base styles */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+}
+
+/* Custom styles using Tailwind classes */
+@layer components {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply mt-5 mb-3 font-bold text-headingcolor;
+  }
+
+  h1 {
+    @apply text-4xl;
+  }
+  h2 {
+    @apply text-3xl;
+  }
+  h3 {
+    @apply text-2xl;
+  }
+  h4 {
+    @apply text-xl;
+  }
+  h5 {
+    @apply text-lg;
+  }
+  h6 {
+    @apply text-base;
+  }
+
+  p {
+    @apply mb-3 text-descriptioncolor;
+  }
+
+  a {
+    @apply no-underline hover:underline;
+  }
+
+  ul,
+  ol {
+    @apply ml-5 mb-3;
+  }
+
+  blockquote {
+    @apply my-5 pl-4 border-l-4 border-gray-300;
+  }
+
+  pre,
+  code {
+    @apply font-mono bg-gray-100 rounded;
+  }
+
+  pre {
+    @apply p-3 overflow-x-auto;
+  }
+
+  code {
+    @apply px-1 py-0.5 text-sm text-pink-600;
+  }
+
+  img {
+    @apply max-w-full h-auto;
+  }
+
+  table {
+    @apply w-full border-collapse;
+  }
+
+  th,
+  td {
+    @apply text-left p-2 border-b border-gray-200;
+  }
+}
