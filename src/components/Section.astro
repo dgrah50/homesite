@@ -11,7 +11,7 @@ const { title, moreLink } = Astro.props;
   <h2 class="text-sm text-text-subheading mb-2">
     >> {title}
   </h2>
-  <div class="flex gap-4">
+  <div class="flex flex-col md:flex-row gap-4">
     <slot />
     <a class="text-text-body self-end text-sm" href={moreLink}>more &rarr;</a>
   </div>

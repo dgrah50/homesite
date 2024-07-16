@@ -1,9 +1,7 @@
-/* Tailwind base styles */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Custom styles using Tailwind classes */
 @layer components {
   h1,
   h2,

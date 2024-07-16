@@ -7,7 +7,7 @@ const { title } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en" class="h-full">
+<html lang="en" class="">
   <head>
     <meta charset="UTF-8" />
     <meta name="description" content="Astro description" />
@@ -19,16 +19,16 @@ const { title } = Astro.props;
     />
     <title>{title}</title>
   </head>
-  <body class="h-full w-full bg-background-dark">
-    <div class="gridcontainer h-full">
+  <body class="bg-background-dark">
+    <div class="gridcontainer min-h-full">
       <header
-        class="header sticky top-2 z-50 flex items-center justify-between p-1 px-4 rounded-xl bg-background text-text-body border-border border"
+        class="header sticky top-2 z-50 flex flex-row items-center justify-between rounded-xl bg-background text-text-body border-border border"
       >
-        <a href="/" class="text-xs font-thin">
+        <a href="/" class="text-sm font-thin">
           <span class="text-white font-bold">dayan</span>grah.am
         </a>
         <nav>
-          <a href="/about" class="text-xs font-thin">about</a>
+          <a href="/about" class="text-sm font-thin">about</a>
         </nav>
       </header>
       <main class="content">
@@ -48,32 +48,62 @@ const { title } = Astro.props;
 </html>
 
 <style is:global>
-  html {
-    font-family: Inter, system-ui, sans-serif;
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100vw;
+    min-height: 100vh;
+    position: fixed;
+    overflow-y: scroll;
   }
 
   .gridcontainer {
     @apply bg-background shadow-lg;
     box-shadow: 0 20px 50px rgba(255, 255, 255, 0.1);
     display: grid;
-    grid-template-columns: 1fr 800px 1fr;
-    grid-template-rows: 40px 1fr 40px;
+    grid-template-columns: 1fr minmax(0, 800px) 1fr;
+    grid-template-rows: auto 1fr auto;
     gap: 0px 0px;
     grid-template-areas:
       "side-left header side-right"
       "side-left content side-right"
       "side-left footer side-right";
+    flex: 1;
+    width: 100%;
+  }
+
+  @media (max-width: 1024px) {
+    .gridcontainer {
+      grid-template-columns: 1fr;
+      grid-template-areas:
+        "header"
+        "content"
+        "footer";
+    }
+
+    .content {
+      width: 100%;
+      padding: 0 16px;
+      overflow-y: scroll;
+    }
   }
 
   .content {
     grid-area: content;
-    width: 800px;
+    width: 100%;
+    max-width: 800px;
   }
+
   .footer {
     grid-area: footer;
+    padding: 1rem;
   }
+
   .header {
     grid-area: header;
     @apply shadow-header;
+    padding: 1rem;
   }
 </style>
