@@ -1,6 +1,6 @@
 ---
 import { getCollection } from "astro:content";
-import Layout from "../../layouts/Layout.astro";
+import Layout from "../../layouts/HomeLayout.astro";
 import PostRow from "../../components/PostRow.astro";
 
 const posts = (await getCollection("learning"))?.sort(
