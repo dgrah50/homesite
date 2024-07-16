@@ -3,9 +3,6 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-}
-
 /* Custom styles using Tailwind classes */
 @layer components {
   h1,
@@ -14,7 +11,7 @@ body {
   h4,
   h5,
   h6 {
-    @apply mt-5 mb-3 font-bold text-headingcolor;
+    @apply mt-5 mb-3 font-bold text-text-heading;
   }
 
   h1 {
@@ -37,7 +34,7 @@ body {
   }
 
   p {
-    @apply mb-3 text-descriptioncolor;
+    @apply mb-3 text-text-description;
   }
 
   a {
@@ -50,12 +47,12 @@ body {
   }
 
   blockquote {
-    @apply my-5 pl-4 border-l-4 border-gray-300;
+    @apply my-5 pl-4 border-l-4 border-border;
   }
 
   pre,
   code {
-    @apply font-mono bg-gray-100 rounded;
+    @apply font-mono bg-background rounded;
   }
 
   pre {
@@ -63,7 +60,7 @@ body {
   }
 
   code {
-    @apply px-1 py-0.5 text-sm text-pink-600;
+    @apply px-1 py-0.5 text-sm text-primary;
   }
 
   img {
@@ -76,6 +73,6 @@ body {
 
   th,
   td {
-    @apply text-left p-2 border-b border-gray-200;
+    @apply text-left p-2 border-b border-border;
   }
 }

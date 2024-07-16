@@ -7,7 +7,7 @@ const { title } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" class="h-full">
   <head>
     <meta charset="UTF-8" />
     <meta name="description" content="Astro description" />
@@ -19,13 +19,13 @@ const { title } = Astro.props;
     />
     <title>{title}</title>
   </head>
-  <body>
-    <div class="gridcontainer">
+  <body class="h-full w-full bg-background-dark">
+    <div class="gridcontainer h-full">
       <header
-        class="header sticky top-2 z-50 flex items-center justify-between p-1 px-4 rounded-xl bg-background text-textcolor border-border border"
+        class="header sticky top-2 z-50 flex items-center justify-between p-1 px-4 rounded-xl bg-background text-text-body border-border border"
       >
         <a href="/" class="text-xs font-thin">
-          <bold class="text-white">dayan</bold>grah.am
+          <span class="text-white font-bold">dayan</span>grah.am
         </a>
         <nav>
           <a href="/about" class="text-xs font-thin">about</a>
@@ -34,34 +34,26 @@ const { title } = Astro.props;
       <main class="content">
         <slot />
       </main>
-      <footer class="footer text-center text-xs text-textcolor">
+      <footer class="footer text-center text-xs text-text-body">
         <span id="year"></span> dayangrah.am
       </footer>
-      <script>
-        const yearElement = document.getElementById("year");
-        if (yearElement != null) {
-          yearElement.textContent = new Date().getFullYear().toString();
-        }
-      </script>
     </div>
+    <script>
+      const yearElement = document.getElementById("year");
+      if (yearElement) {
+        yearElement.textContent = new Date().getFullYear().toString();
+      }
+    </script>
   </body>
 </html>
 
 <style is:global>
   html {
     font-family: Inter, system-ui, sans-serif;
-    height: 100%;
-    background-color: #141414;
-  }
-
-  body {
-    height: 100%;
-    width: 100%;
   }
 
   .gridcontainer {
-    height: 100%;
-    background-color: #1c1c1c;
+    @apply bg-background shadow-lg;
     box-shadow: 0 20px 50px rgba(255, 255, 255, 0.1);
     display: grid;
     grid-template-columns: 1fr 800px 1fr;
@@ -76,36 +68,12 @@ const { title } = Astro.props;
   .content {
     grid-area: content;
     width: 800px;
-    /* box-shadow:
-      0px 8px 10px 0px rgba(0, 0, 0, 0.08),
-      0px 3px 16px 0px rgba(0, 0, 0, 0.08),
-      0px 4px 5px 0px rgba(0, 0, 0, 0.08); */
   }
   .footer {
     grid-area: footer;
   }
   .header {
     grid-area: header;
-    box-shadow:
-      0px 8px 10px 0px rgba(0, 0, 0, 0.08),
-      0px 3px 16px 0px rgba(0, 0, 0, 0.08),
-      0px 4px 5px 0px rgba(0, 0, 0, 0.08);
-  }
-  @keyframes gradient {
-    0% {
-      background-position: 0% 50%;
-    }
-    50% {
-      background-position: 100% 50%;
-    }
-    100% {
-      background-position: 0% 50%;
-    }
-  }
-
-  .animate-gradient {
-    background: linear-gradient(270deg, #ff00ff, #00ffff);
-    background-size: 400% 400%;
-    animation: gradient 3s ease infinite;
+    @apply shadow-header;
   }
 </style>

@@ -1,88 +1,89 @@
 ---
-import Layout from "../layouts/Layout.astro";
+import Layout from "../layouts/HomeLayout.astro";
 import Card from "../components/Card.astro";
 import HeroCard from "../components/HeroCard.astro";
+import Section from "../components/Section.astro";
+
+const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
+
+const sections = [
+  {
+    title: "some stuff i've built",
+    moreLink: `${baseUrl}/projects/`,
+    cards: [
+      {
+        title: "magic table",
+        body: "mid air gestures and raspberry pi fun",
+        href: `${baseUrl}/projects/magic-table`,
+      },
+      {
+        title: "live-template",
+        body: "upgradeable project templates for react",
+        href: `${baseUrl}/projects/live-template`,
+      },
+      {
+        title: "sendwiz",
+        body: "schedule imessage + whatsapp with ai",
+        href: `${baseUrl}/projects/sendwiz`,
+      },
+    ],
+  },
+  {
+    title: "some stuff i've thought about",
+    moreLink: `${baseUrl}/thoughts/`,
+    cards: [
+      {
+        title: "on runescape",
+        body: "greatest mmorpg",
+        href: `${baseUrl}/thoughts/runescape`,
+      },
+      {
+        title: "on suffering",
+        body: "is it necessary for greatness?",
+        href: `${baseUrl}/thoughts/suffering`,
+      },
+      {
+        title: "on stack procrastination",
+        body: "muh new framework",
+        href: `${baseUrl}/thoughts/procrastination`,
+      },
+    ],
+  },
+  {
+    title: "some stuff i wanna learn",
+    moreLink: `${baseUrl}/learning/`,
+    cards: [
+      {
+        title: "on concurrency",
+        body: "too much stuff",
+        href: `${baseUrl}/learning/project-1`,
+      },
+      {
+        title: "on laravel",
+        body: "productivity",
+        href: `${baseUrl}/learning/laravel`,
+      },
+      {
+        title: "on stack procrastination",
+        body: "muh new framework",
+        href: `${baseUrl}/learning/procrastination`,
+      },
+    ],
+  },
+];
 ---
 
 <Layout title="dayangrah.am">
   <div class="flex flex-col items-center text-black bg-background">
     <HeroCard class="my-8" />
-    <section title="stuff i've built" class="flex-col gap-4 mt-8">
-      <h2 class="text-sm text-subheadingcolor mb-2">
-        >> some stuff i've built
-      </h2>
-      <div class="flex gap-4">
-        <Card
-          title="magic table"
-          body="mid air gestures and raspberry pi fun"
-          href="/projects/magic-table"
-        />
-        <Card
-          title="live-template"
-          body="upgradeable project templates for react"
-          href="/projects/live-template"
-        />
-        <Card
-          title="sendwiz"
-          body="schedule imessage + whatsapp with ai"
-          href="/projects/sendwiz"
-        />
-        <a class="text-textcolor self-end text-sm" href="/projects/"
-          >more &rarr;</a
-        >
-      </div>
-    </section>
-    <section title="stuff i've thought about" class="flex-col gap-4 mt-8">
-      <h2 class="text-sm text-subheadingcolor mb-2">
-        >> some stuff i've thought about
-      </h2>
-      <div class="flex gap-4">
-        <Card
-          title="on runescape"
-          body="greatest mmorpg"
-          href="/thoughts/runescape"
-        />
-        <Card
-          title="on suffering"
-          body="is it necessary for greatness?"
-          href="/thoughts/suffering"
-        />
-        <Card
-          title="on stack procrastination"
-          body="muh new framework"
-          href="/thoughts/procrastination"
-        />
-        <a class="text-textcolor self-end text-sm" href="/thoughts/"
-          >more &rarr;</a
-        >
-      </div>
-    </section>
-    <section title="stuff i wanna learn" class="flex-col gap-4 mt-8">
-      <h2 class="text-sm text-subheadingcolor mb-2">
-        >> some stuff i wanna learn
-      </h2>
-      <div class="flex gap-4">
-        <Card
-          title="on concurrency"
-          body="too much stuff"
-          href="/learning/project-1"
-        />
-        <Card title="on laravel" body="productivity" href="/learning/laravel" />
-        <Card
-          title="on stack procrastination"
-          body="muh new framework"
-          href="/learning/procrastination"
-        />
-        <a class="text-textcolor self-end text-sm" href="/learning/"
-          >more &rarr;</a
-        >
-      </div>
-    </section>
-  </div>
-
-  <style>
-    main {
-      margin: auto;
+    {
+      sections.map(({ title, moreLink, cards }) => (
+        <Section title={title} moreLink={moreLink}>
+          {cards.map((card) => (
+            <Card {...card} />
+          ))}
+        </Section>
+      ))
     }
-  </style>
-</Layout>
+  </div>
+</Layout>; ---
