@@ -1,5 +1,6 @@
 ---
 layout: ../../layouts/BlogLayout.astro
+pubDate: 2024-07-16
 title: "EEERover"
 technologies: ["C++", "Arduino", "ESP8266", "Custom PCB"]
 ---

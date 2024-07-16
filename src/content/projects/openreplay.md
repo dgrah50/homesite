@@ -1,5 +1,6 @@
 ---
 layout: ../../layouts/BlogLayout.astro
+pubDate: 2024-07-16
 title: "Contributions to OpenReplay"
 technologies: ["JavaScript", "TypeScript", "Open Source"]
 ---

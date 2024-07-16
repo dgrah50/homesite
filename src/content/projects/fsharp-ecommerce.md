@@ -1,5 +1,6 @@
 ---
 layout: ../../layouts/BlogLayout.astro
+pubDate: 2024-07-16
 title: "F# eCommerce Site"
 technologies: ["F#", "React", "Redux", "MongoDB"]
 ---

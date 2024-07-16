@@ -1,5 +1,6 @@
 ---
 layout: ../../layouts/BlogLayout.astro
+pubDate: 2024-07-16
 title: "BikeSafe"
 technologies: ["C++", "Arduino", "GSM", "GPS", "Accelerometer"]
 ---
