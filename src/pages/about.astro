@@ -5,10 +5,15 @@ import faceImage from "../../public/dayangraham.png";
 ---
 
 <Layout title="dayangrah.am">
-  <div class="main-wrapper flex flex-row mt-8">
+  <div class="main-wrapper flex md:flex-row flex-col mt-8">
     <div class="flex flex-col flex-1">
-      <div class="placeholder-div"></div>
+      <div class="placeholder-div hidden md:block"></div>
       <h2 class="heading">my name is dayan</h2>
+      <Image
+        class="profile-image block md:hidden self-center"
+        src={faceImage}
+        alt={`Dayan Graham's animated face`}
+      />
       <p class="body">i'm a software engineer currently based in london 🇬🇧.</p>
       <br />
       <p class="body">outside of programming, i enjoy:</p>
@@ -35,7 +40,7 @@ import faceImage from "../../public/dayangraham.png";
     </div>
     <div class="image-and-spotify flex flex-col items-center">
       <Image
-        class="profile-image"
+        class="profile-image hidden md:block"
         src={faceImage}
         alt={`Dayan Graham's animated face`}
       />
