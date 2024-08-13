@@ -1,15 +1,11 @@
 ---
 layout: ../../layouts/BlogLayout.astro
 pubDate: 2024-07-16
-title: "RuneScape"
+title: "runescape"
 ---
 
-## RuneScape
+## runescape
 
 ### What is it?
 
-RuneScape is a fantasy massively multiplayer online role-playing game (MMORPG) developed and published by Jagex. 
-
-### More Info
-
-RuneScape offers a rich world with various quests, skills, and activities. Players can explore the medieval fantasy realm of Gielinor, engage in combat, trade, craft, and interact with other players. The game is continuously updated with new content and events. It has a vast player base and has evolved significantly since its initial release, incorporating modern graphics and gameplay mechanics wh
+As I get older, I realise how much of my online education I owe to RuneScape. The basics of avoiding online scams, the awareness of supply and demand effects on a market and the need to invest time to achieve goals. All by the age of about 10, I had been gifted so much by this legendary game. Years after I have finished playing the game, there's a nod of respect and instant kinship whenever someone mentions that they also played.
