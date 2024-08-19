@@ -1,8 +1,8 @@
 ---
 import { getCollection } from "astro:content";
 import Layout from "../../layouts/HomeLayout.astro";
-import PostRow from "../../components/PostRow.astro";
 import BackButton from "../../components/BackButton.astro";
+import ProjectList from "../../components/ProjectList.astro";
 
 const posts = (await getCollection("thoughts"))?.sort(
   (blogEntryA, blogEntryB) =>
@@ -11,22 +11,12 @@ const posts = (await getCollection("thoughts"))?.sort(
 );
 ---
 
-<Layout title="dayangrah.am - Thoughts Blog" description="Thoughts Blog">
+<Layout title="dayangrah.am - Project Blog" description="Project Blog">
   <main
-    class="w-screen h-screen flex flex-col justify-start items-start max-w-3xl mx-auto p-8"
+    class="w-full h-screen flex flex-col justify-start items-start max-w-3xl mx-auto p-8"
   >
     <BackButton />
     <h1 class="text-4xl font-bold mb-4 text-neutral-100 font-mono">Posts</h1>
-    <ul class="w-full">
-      {
-        posts?.map((post) => (
-          <PostRow
-            title={post.data.title || "No title"}
-            date={post.data.pubDate || new Date()}
-            url={post.slug}
-          />
-        ))
-      }
-    </ul>
+    <ProjectList posts={posts} />
   </main>
 </Layout>

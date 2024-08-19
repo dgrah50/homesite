@@ -1,0 +1,27 @@
+---
+import PostRow from "./PostRow.astro";
+
+interface Props {
+  posts: Array<{
+    data: {
+      title?: string;
+      pubDate?: Date;
+    };
+    slug: string;
+  }>;
+}
+
+const { posts } = Astro.props;
+---
+
+<ul class="w-full">
+  {
+    posts.map((post) => (
+      <PostRow
+        title={post.data.title || "No title"}
+        date={post.data.pubDate || new Date()}
+        url={post.slug}
+      />
+    ))
+  }
+</ul>
