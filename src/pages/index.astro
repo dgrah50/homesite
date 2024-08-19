@@ -3,77 +3,61 @@ import Layout from "../layouts/HomeLayout.astro";
 import Card from "../components/Card.astro";
 import HeroCard from "../components/HeroCard.astro";
 import Section from "../components/Section.astro";
+import { getCollection } from "astro:content";
 
 const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
+
+// Fetch the latest 3 entries for each collection
+const latestProjects = await getCollection("projects").then((projects) =>
+  projects
+    .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+    .slice(0, 3)
+);
+
+const latestThoughts = await getCollection("thoughts").then((thoughts) =>
+  thoughts
+    .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+    .slice(0, 3)
+);
+
+const latestLearning = await getCollection("learning").then((learning) =>
+  learning
+    .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+    .slice(0, 3)
+);
 
 const sections = [
   {
     title: "some stuff i've built",
     moreLink: `${baseUrl}/projects/`,
-    cards: [
-      {
-        title: "magic table",
-        body: "mid air gestures and raspberry pi fun",
-        href: `${baseUrl}/projects/magic-table`,
-      },
-      {
-        title: "live-template",
-        body: "upgradeable project templates for react",
-        href: `${baseUrl}/projects/live-template`,
-      },
-      {
-        title: "sendwiz",
-        body: "schedule imessage + whatsapp with ai",
-        href: `${baseUrl}/projects/sendwiz`,
-      },
-    ],
+    cards: latestProjects.map((project) => ({
+      title: project.data.title,
+      body: project.data.description,
+      href: `${baseUrl}/projects/${project.slug}`,
+    })),
   },
   {
     title: "some stuff i've thought about",
     moreLink: `${baseUrl}/thoughts/`,
-    cards: [
-      {
-        title: "on runescape",
-        body: "greatest mmorpg",
-        href: `${baseUrl}/thoughts/runescape`,
-      },
-      {
-        title: "on finishing",
-        body: "done is better than perfect",
-        href: `${baseUrl}/thoughts/finishing`,
-      },
-      {
-        title: "on hobbies",
-        body: "time = money?",
-        href: `${baseUrl}/thoughts/hobbies`,
-      },
-    ],
+    cards: latestThoughts.map((thought) => ({
+      title: thought.data.title,
+      body: thought.data.description,
+      href: `${baseUrl}/thoughts/${thought.slug}`,
+    })),
   },
   {
     title: "some stuff i wanna learn",
     moreLink: `${baseUrl}/learning/`,
-    cards: [
-      {
-        title: "on spanish",
-        body: "unlock more thoughts",
-        href: `${baseUrl}/learning/spanish`,
-      },
-      {
-        title: "on chess",
-        body: "childlike humility",
-        href: `${baseUrl}/learning/chess`,
-      },
-      {
-        title: "on concurrency",
-        body: "single-threaded thoughts",
-        href: `${baseUrl}/learning/concurrency`,
-      },
-    ],
+    cards: latestLearning.map((item) => ({
+      title: item.data.title,
+      body: item.data.description,
+      href: `${baseUrl}/learning/${item.slug}`,
+    })),
   },
 ];
 ---
 
-<Layout title="dayangrah.am">
+<Layout title="dayangrah.am" description="Home">
   <div class="flex flex-col items-center text-black bg-background">
     <HeroCard class="my-8" />
     {

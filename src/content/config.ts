@@ -1,12 +1,34 @@
 import { z, defineCollection } from "astro:content";
 
-// 2. Define a `type` and `schema` for each collection
 const projectCollection = defineCollection({
-  type: "content", // v2.5.0 and later
+  type: "content",
   schema: z.object({
     title: z.string(),
     pubDate: z.date(),
+    description: z.string(),
   }),
 });
 
-export const collections = { projects: projectCollection };
+const thoughtsCollection = defineCollection({
+  type: "content",
+  schema: z.object({
+    title: z.string(),
+    pubDate: z.date(),
+    description: z.string(),
+  }),
+});
+
+const learningCollection = defineCollection({
+  type: "content",
+  schema: z.object({
+    title: z.string(),
+    pubDate: z.date(),
+    description: z.string(),
+  }),
+});
+
+export const collections = {
+  projects: projectCollection,
+  thoughts: thoughtsCollection,
+  learning: learningCollection,
+};

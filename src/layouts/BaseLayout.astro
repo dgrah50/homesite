@@ -1,9 +1,12 @@
 ---
+import Header from "../components/Header.astro";
+
 interface Props {
   title: string;
+  description: string;
 }
 
-const { title } = Astro.props;
+const { title, description } = Astro.props;
 const baseUrl = import.meta.env.BASE_URL;
 ---
 
@@ -11,7 +14,7 @@ const baseUrl = import.meta.env.BASE_URL;
 <html lang="en" class="">
   <head>
     <meta charset="UTF-8" />
-    <meta name="description" content="Astro description" />
+    <meta name="description" content={description} />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link
       rel="apple-touch-icon"
@@ -41,23 +44,15 @@ const baseUrl = import.meta.env.BASE_URL;
   </head>
   <body class="bg-background-dark">
     <div class="gridcontainer min-h-full">
-      <header
-        class="header sticky top-2 z-50 flex flex-row items-center justify-between rounded-xl bg-background text-text-body border-border border"
-      >
-        <a href={baseUrl} class="text-sm font-thin">
-          <span class="text-white font-bold">dayan</span>grah.am
-        </a>
-        <nav>
-          <a href="/about" class="text-sm font-thin">about</a>
-        </nav>
-      </header>
+      <Header />
       <main class="content">
         <slot />
       </main>
-      <footer class="footer text-center text-xs text-text-body">
+      <footer class="footer text-center text-xs text-text-body font-mono">
         <span id="year"></span> dayangrah.am
       </footer>
     </div>
+
     <script>
       const yearElement = document.getElementById("year");
       if (yearElement) {
@@ -68,6 +63,24 @@ const baseUrl = import.meta.env.BASE_URL;
 </html>
 
 <style is:global>
+  @font-face {
+    font-family: "Softglyphs";
+    src: url("/fonts/Softglyphs.otf");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: "CQ Mono";
+    src: url("/fonts/CQMono.otf");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+  }
+  .headline {
+    font-family: "Softglyphs";
+  }
+
   html,
   body {
     margin: 0;

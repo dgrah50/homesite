@@ -2,11 +2,8 @@
 layout: ../../layouts/BlogLayout.astro
 pubDate: 2024-07-16
 title: "hobbies"
+description: "time != money"
 ---
-
-## hobbies
-
-### What is it?
 
 A hobby is defined as:
 

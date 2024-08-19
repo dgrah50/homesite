@@ -2,11 +2,8 @@
 layout: ../../layouts/BlogLayout.astro
 pubDate: 2024-08-13
 title: "spanish"
+description: "unlock more thoughts"
 ---
-
-## spanish
-
-### Why I want to learn about it?
 
 Growing up in Britain, like many of peers from Britain, I speak one language only :( . When I reached university and made friends from different corners of the Earth speaking 2, 3, 4, 5+ languages, I realised just how much I am missing out on! Whilst I was alright at German at school, achieving an A* at GCSE, I realised that I want to start again in a new language. I would love to gift my unborn child with the privilege of speaking more than one language - so I have to start learning now. 
 

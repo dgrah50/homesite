@@ -5,7 +5,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: "#0D6D01",
+        primary: "rgba(13,109,1,1.0)",
         background: {
           DEFAULT: "#1c1c1c",
           dark: "#141414",
@@ -14,17 +14,21 @@ export default {
           DEFAULT: "rgba(255, 255, 255, 0.06)",
         },
         text: {
-          heading: "rgba(255, 255, 255, 0.95)",
-          subheading: "rgba(255, 255, 255, 0.75)",
-          body: "rgba(255, 255, 255, 0.5)",
+          primary: "rgba(13,109,1,1.0)",
+          heading: "rgba(255, 255, 255, 0.75)",
+          subheading: "rgba(255, 255, 255, 0.65)",
+          body: "rgba(255, 255, 255, 0.6)",
           description: "rgba(255, 234, 204, 0.3)",
         },
       },
       fontSize: {
+        headline: "3rem",
         xxs: "0.6rem",
       },
       fontFamily: {
         sans: ["Inter", "sans-serif"],
+        mono: ["CQ Mono", "monospace"],
+        softglyphs: ["Softglyphs", "sans-serif"],
       },
       boxShadow: {
         header:

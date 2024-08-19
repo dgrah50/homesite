@@ -1,17 +1,12 @@
 ---
 layout: ../../layouts/BlogLayout.astro
-pubDate: 2024-07-16
-title: "F# eCommerce Site"
+pubDate: 2020-07-16
+title: "f# ecommerce site"
 technologies: ["F#", "React", "Redux", "MongoDB"]
+description: "an e-commerce site built with React and Redux on the frontend and F# on the backend."
 ---
 
-## F# eCommerce Site
-
-### What is it?
-
 An e-commerce site built with React and Redux on the frontend and F# on the backend.
-
-### More Info
 
 This project was a challenge to see if I could make a REST API in a functional language, choosing F# with the Giraffe web framework. The backend uses a NoSQL database in MongoDB to store item details. On the frontend, React with Redux is used for state management. This project helped me learn state management in a functional programming context.
 

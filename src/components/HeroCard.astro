@@ -13,11 +13,13 @@ const { class: className } = Astro.props;
       alt={`Dayan Graham's animated face`}
     />
   </div>
-  <h2 class="text-text-heading text-2xl mb-1">dayan graham</h2>
+  <h2 class="headline text-text-heading text-headline mb-1">
+    {"< dayan graham />"}
+  </h2>
   <p class="text-text-description text-xs mb-8">
-    pronounced /ˈdeɪɪ(j)ən . ɡreɪəm/
+    <span class="font-mono">pronounced</span> /ˈdeɪɪ(j)ən . ɡreɪəm/
   </p>
-  <p class="text-text-body text-xs text-right">
-    something about where i work and what i like to do
+  <p class="text-text-body text-xs text-right font-mono">
+    software engineer based in london
   </p>
 </div>

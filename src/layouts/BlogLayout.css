@@ -32,11 +32,12 @@
   }
 
   p {
-    @apply mb-3 text-text-description;
+    @apply mb-3 text-text-body;
+    font-family: "CQ Mono";
   }
 
   a {
-    @apply no-underline hover:underline;
+    color: darkturquoise;
   }
 
   ul,

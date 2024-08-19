@@ -4,6 +4,13 @@ const { frontmatter } = Astro.props;
 import "./BlogLayout.css";
 ---
 
-<BaseLayout title={frontmatter.title}>
+<BaseLayout title={frontmatter.title} description={frontmatter.description}>
+  <h1 class="headline mt-12 mb-16">
+    <span class="text-text-primary text-headline">{frontmatter.title}</span> : {
+      frontmatter.description
+    }
+  </h1>
   <slot />
 </BaseLayout>
+
+---

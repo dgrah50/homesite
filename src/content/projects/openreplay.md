@@ -1,13 +1,10 @@
 ---
 layout: ../../layouts/BlogLayout.astro
-pubDate: 2024-07-16
-title: "Contributions to OpenReplay"
+pubDate: 2024-01-16
+title: "contributions to openreplay"
 technologies: ["JavaScript", "TypeScript", "Open Source"]
+description: "an open-source session replay suite for developers."
 ---
-
-## Contributions to OpenReplay
-
-### What is it?
 
 OpenReplay is an open-source session replay suite for developers.
 

@@ -4,11 +4,13 @@ import { Image } from "astro:assets";
 import faceImage from "../../public/dayangraham.png";
 ---
 
-<Layout title="dayangrah.am">
+<Layout title="dayangrah.am" description="About">
   <div class="main-wrapper flex md:flex-row flex-col mt-8">
     <div class="flex flex-col flex-1">
       <div class="placeholder-div hidden md:block"></div>
-      <h2 class="heading">my name is dayan</h2>
+      <h2 class="text-headline text-text-heading mb-4 font-softglyphs">
+        my name is dayan
+      </h2>
       <Image
         class="profile-image block md:hidden self-center"
         src={faceImage}
@@ -64,12 +66,8 @@ import faceImage from "../../public/dayangraham.png";
     @apply w-48 h-48 rounded-full object-cover mb-4 justify-self-center;
   }
 
-  .heading {
-    @apply text-text-heading text-2xl mb-4;
-  }
-
   .body {
-    @apply text-text-body text-sm;
+    @apply text-text-body text-sm font-mono;
   }
 
   ol,
