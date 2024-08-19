@@ -39,6 +39,20 @@ const { title, description } = Astro.props;
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap"
       rel="stylesheet"
     />
+    <link
+      rel="preload"
+      href="/fonts/CQMono.otf"
+      as="font"
+      type="font/otf"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/Softglyphs.otf"
+      as="font"
+      type="font/otf"
+      crossorigin
+    />
     <title>{title}</title>
   </head>
   <body class="bg-background-dark">
