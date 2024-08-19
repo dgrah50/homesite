@@ -120,6 +120,12 @@ const { title, description } = Astro.props;
     min-height: 100dvh; /* Add dynamic viewport height */
   }
 
+  .content {
+    grid-area: content;
+    width: 100%;
+    max-width: 800px;
+  }
+
   @media (max-width: 1024px) {
     .gridcontainer {
       grid-template-columns: 1fr;
@@ -130,17 +136,9 @@ const { title, description } = Astro.props;
     }
 
     .content {
-      width: calc(100% - 32px);
       padding: 0 16px;
     }
   }
-
-  .content {
-    grid-area: content;
-    width: 100%;
-    max-width: 800px;
-  }
-
   .footer {
     grid-area: footer;
     padding: 1rem;
