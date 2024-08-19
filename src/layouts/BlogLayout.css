@@ -9,7 +9,7 @@
   h4,
   h5,
   h6 {
-    @apply mt-5 mb-3 font-bold text-text-heading;
+    @apply mt-5 mb-3 font-bold text-text-heading font-softglyphs;
   }
 
   h1 {
