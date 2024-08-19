@@ -6,8 +6,22 @@ technologies: ["Webflow", "Flutter"]
 description: "buy and sell shares in music artists"
 ---
 
-Clef is a platform to buy and sell shares in music artists. I built their landing page and defined the tech specs for the app that they are currently building.
+### Conceptual Design and Vision
 
-Imagine investing in an artist before they make it big. Clef allows artists to raise capital without signing restrictive record deals. Inspired by Kanye West's remarks on artist rights, Clef offers music lovers the chance to invest in emerging talents. The landing page was built with Webflow, and the app, which is under construction, will be built with Flutter. Due to regulatory reasons, I have stepped back from this project.
+Clef was envisioned as a revolutionary platform that would redefine the music industry's financial landscape. Although not fully implemented, the concept behind Clef was to create a decentralized marketplace where fans could invest in emerging artists, potentially reaping rewards as the artists' careers flourished.
+
+Key aspects of the Clef concept included:
+
+1. **Democratizing Music Investment**: Allowing everyday music enthusiasts to become stakeholders in an artist's career, fostering a deeper connection between artists and their audience.
+
+2. **Artist Empowerment**: Providing artists with an alternative funding model, freeing them from the constraints of traditional record deals and allowing greater creative and financial autonomy.
+
+3. **Transparent Value Creation**: Creating a system where an artist's success directly translates to value for their early supporters, aligning incentives between artists and fans.
+
+4. **Tech-Driven Solution**: Leveraging modern technologies like blockchain for transparent transactions and smart contracts to automate royalty distributions.
+
+While the full implementation of Clef remains unrealized, the project's conceptual work, including the landing page design and technical specifications, laid a foundation for future innovations in music industry financing. The vision of Clef continues to inspire discussions about alternative models for artist support and fan engagement in the digital age.
+
+
 
 [More details can be found here](https://dayangrah.am/work/clef).
