@@ -3,7 +3,7 @@ const baseUrl = import.meta.env.BASE_URL;
 ---
 
 <header
-  class="header headline sticky top-2 z-50 flex flex-row items-center justify-between rounded-xl bg-background text-text-body border-border border"
+  class="header headline sticky top-2 mt-4 z-50 flex flex-row items-center justify-between rounded-xl hover:border-primary transition-all duration-500 text-text-body border-border border"
 >
   <a href={baseUrl} class="text-sm font-thin">
     <span class="text-white font-bold">dayan</span>grah.am
@@ -12,3 +12,11 @@ const baseUrl = import.meta.env.BASE_URL;
     <a href="/about" class="text-sm font-thin">about</a>
   </nav>
 </header>
+
+<style>
+  .header {
+    background-color: rgba(28, 28, 28, 0.02);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px); /* For Safari */
+  }
+</style>

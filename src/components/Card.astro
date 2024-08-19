@@ -8,8 +8,8 @@ interface Props {
 const { href, title, body } = Astro.props;
 ---
 
-<li
-  class="group w-52 rounded-lg shadow-sm hover:shadow-lg border border-border list-none p-2 text-text-body hover:border-primary hover:text-white transition-all duration-500 bg-background"
+<div
+  class="group w-52 rounded-lg shadow-sm hover:shadow-lg border border-border list-none p-2 text-text-body transition-all duration-500 hover:border-primary hover:text-white bg-background"
 >
   <a href={href}>
     <h5 class="text-sm text-text-subheading mb-0 font-mono">
@@ -20,7 +20,7 @@ const { href, title, body } = Astro.props;
       {body}
     </p>
   </a>
-</li>
+</div>
 
 <style>
   li {

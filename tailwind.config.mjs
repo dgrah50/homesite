@@ -7,7 +7,7 @@ export default {
       colors: {
         primary: "rgba(13,109,1,1.0)",
         background: {
-          DEFAULT: "#1c1c1c",
+          DEFAULT: "rgba(28,28,28,1.0)",
           dark: "#141414",
         },
         border: {
