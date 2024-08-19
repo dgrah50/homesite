@@ -18,7 +18,7 @@ export default {
           heading: "rgba(255, 255, 255, 0.75)",
           subheading: "rgba(255, 255, 255, 0.65)",
           body: "rgba(255, 255, 255, 0.6)",
-          description: "rgba(255, 234, 204, 0.3)",
+          description: "rgba(255, 234, 204, 0.4)",
         },
       },
       fontSize: {
