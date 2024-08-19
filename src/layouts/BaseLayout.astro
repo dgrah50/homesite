@@ -99,10 +99,10 @@ const { title, description } = Astro.props;
     margin: 0;
     padding: 0;
     height: 100%;
-    width: 100vw;
-    min-height: 100vh;
-    position: fixed;
-    overflow-y: scroll;
+    height: 100dvh; /* Add dynamic viewport height */
+    width: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
   }
 
   .gridcontainer {
@@ -116,8 +116,8 @@ const { title, description } = Astro.props;
       "side-left header side-right"
       "side-left content side-right"
       "side-left footer side-right";
-    flex: 1;
-    width: 100%;
+    min-height: 100vh;
+    min-height: 100dvh; /* Add dynamic viewport height */
   }
 
   @media (max-width: 1024px) {
@@ -132,7 +132,6 @@ const { title, description } = Astro.props;
     .content {
       width: 100%;
       padding: 0 16px;
-      overflow-y: scroll;
     }
   }
 
