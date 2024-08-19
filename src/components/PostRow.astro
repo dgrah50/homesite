@@ -10,12 +10,12 @@ interface Props {
 const { title, date, url } = Astro.props;
 ---
 
-<li
-  class="w-full text-neutral-100 hover:text-neutral-400 ease-in-out transition-colors border-b-neutral-400 border-dashed border-b-1 my-2 font-mono"
+<a
+  class="text-sm md:text-base decoration-none flex justify-between"
+  href={`/projects/${url}`}
 >
-  <a
-    class="text-sm md:text-base decoration-none flex justify-between"
-    href={`/projects/${url}`}
+  <li
+    class="w-full text-neutral-100 hover:text-neutral-400 ease-in-out transition-colors border-b-neutral-400 border-dashed border-b-1 my-2 font-mono"
   >
     <p class="inline-block whitespace-nowrap">
       {title}
@@ -27,5 +27,5 @@ const { title, date, url } = Astro.props;
     >
       {formatDate(date)}
     </time>
-  </a>
-</li>
+  </li>
+</a>
