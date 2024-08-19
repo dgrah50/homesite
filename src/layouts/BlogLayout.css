@@ -31,7 +31,8 @@
     @apply text-base;
   }
 
-  p {
+  p,
+  li {
     @apply mb-3 text-text-body;
     font-family: "CQ Mono";
   }

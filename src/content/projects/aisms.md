@@ -37,7 +37,7 @@ The project structure follows best practices for Python development:
 - Ruff and MyPy are employed for linting and type checking, ensuring code quality and consistency.
 - The application is configured to run asynchronously, as evidenced by the use of FastAPI, Uvicorn, and asynchronous database drivers.
 
-The implementation likely follows these steps:
+The implementation follows these steps:
 
 1. Incoming SMS messages are received via a Twilio webhook, handled by a FastAPI endpoint.
 2. The message content is processed using LangChain and potentially OpenAI's language models to understand the intent and generate an appropriate response.
