@@ -4,7 +4,7 @@ import { Image } from "astro:assets";
 import faceImage from "../../public/dayangraham.png";
 ---
 
-<Layout title="dayangrah.am" description="about">
+<Layout title="about | dayangrah.am" description="About Dayan Graham - software engineer, marathon runner, and music enthusiast based in the Cayman Islands.">
   <div class="main-wrapper flex md:flex-row flex-col mt-8">
     <div class="flex flex-col flex-1">
       <div class="placeholder-div hidden md:block"></div>
@@ -18,7 +18,7 @@ import faceImage from "../../public/dayangraham.png";
         src={faceImage}
         alt={`Dayan Graham's animated face`}
       />
-      <p class="body whitespace-nowrap">
+      <p class="body line-clamp-2">
         i'm a software engineer currently based in <s class="text-text-body/20"
           >london 🇬🇧</s
         > the cayman islands 🇰🇾
@@ -60,8 +60,7 @@ import faceImage from "../../public/dayangraham.png";
           src="https://open.spotify.com/embed/playlist/37i9dQZF1EpkXfdyLb94uM?utm_source=generator&theme=0"
           width="100%"
           height="500"
-          frameborder="0"
-          allowfullscreen=""
+          style="border:none"
           allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
           loading="lazy"></iframe>
       </div>

@@ -2,16 +2,17 @@
 import PostRow from "./PostRow.astro";
 
 interface Props {
+  basePath?: string;
   posts: Array<{
     data: {
       title?: string;
       pubDate?: Date;
     };
-    slug: string;
+    id: string;
   }>;
 }
 
-const { posts } = Astro.props;
+const { posts, basePath = "/projects" } = Astro.props;
 ---
 
 <ul class="w-full">
@@ -20,7 +21,7 @@ const { posts } = Astro.props;
       <PostRow
         title={post.data.title || "No title"}
         date={post.data.pubDate || new Date()}
-        url={post.slug}
+        url={`${basePath}/${post.id}`}
       />
     ))
   }

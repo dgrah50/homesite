@@ -1,17 +1,19 @@
 ---
 import BaseLayout from "./BaseLayout.astro";
-const { frontmatter } = Astro.props;
 import "./BlogLayout.css";
+
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+const ogTitle = `${title} | dayangrah.am`;
 ---
 
-<BaseLayout title={frontmatter.title} description={frontmatter.description}>
+<BaseLayout title={title} description={description} ogTitle={ogTitle}>
   <h1 class="headline mt-12 mb-16">
-    <span class="text-text-primary text-headline">{frontmatter.title}</span> : {
-      frontmatter.description
-    }
+    <span class="text-text-primary text-headline">{title}</span> : {description}
   </h1>
   <slot />
 </BaseLayout>
-
----
-

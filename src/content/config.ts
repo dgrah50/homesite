@@ -1,7 +1,8 @@
 import { z, defineCollection } from "astro:content";
+import { glob } from "astro/loaders";
 
 const projectCollection = defineCollection({
-  type: "content",
+  loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/projects" }),
   schema: z.object({
     title: z.string(),
     pubDate: z.date(),
@@ -10,16 +11,7 @@ const projectCollection = defineCollection({
 });
 
 const thoughtsCollection = defineCollection({
-  type: "content",
-  schema: z.object({
-    title: z.string(),
-    pubDate: z.date(),
-    description: z.string(),
-  }),
-});
-
-const learningCollection = defineCollection({
-  type: "content",
+  loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/thoughts" }),
   schema: z.object({
     title: z.string(),
     pubDate: z.date(),
@@ -30,5 +22,4 @@ const learningCollection = defineCollection({
 export const collections = {
   projects: projectCollection,
   thoughts: thoughtsCollection,
-  learning: learningCollection,
 };

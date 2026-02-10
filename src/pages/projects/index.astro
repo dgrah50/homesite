@@ -1,7 +1,6 @@
 ---
 import { getCollection } from "astro:content";
 import Layout from "../../layouts/HomeLayout.astro";
-import PostRow from "../../components/PostRow.astro";
 import BackButton from "../../components/BackButton.astro";
 import ProjectList from "../../components/ProjectList.astro";
 
@@ -12,12 +11,12 @@ const posts = (await getCollection("projects"))?.sort(
 );
 ---
 
-<Layout title="dayangrah.am - Project Blog" description="Project Blog">
+<Layout title="projects | dayangrah.am" description="Things Dayan Graham has built - AI, IoT, open source, and more.">
   <main
     class="w-full h-screen flex flex-col justify-start items-start max-w-3xl mx-auto p-8"
   >
     <BackButton />
-    <h1 class="text-4xl font-bold mb-4 text-neutral-100 font-mono">Posts</h1>
+    <h1 class="text-4xl font-bold mb-4 text-neutral-100 font-mono">projects</h1>
     <ProjectList posts={posts} />
   </main>
 </Layout>

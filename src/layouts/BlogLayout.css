@@ -52,11 +52,11 @@
 
   pre,
   code {
-    @apply font-mono bg-background rounded;
+    @apply font-mono rounded;
   }
 
   pre {
-    @apply p-3 overflow-x-auto;
+    @apply p-3 overflow-x-auto border border-border;
   }
 
   code {

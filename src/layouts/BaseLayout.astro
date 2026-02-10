@@ -4,9 +4,13 @@ import Header from "../components/Header.astro";
 interface Props {
   title: string;
   description: string;
+  ogTitle?: string;
 }
 
-const { title, description } = Astro.props;
+const { title, description, ogTitle } = Astro.props;
+const canonicalURL = new URL(Astro.url.pathname, "https://dayangrah.am");
+const ogImage = new URL("/dayangraham.png", "https://dayangrah.am");
+const displayTitle = ogTitle || title;
 ---
 
 <!doctype html>
@@ -15,24 +19,34 @@ const { title, description } = Astro.props;
     <meta charset="UTF-8" />
     <meta name="description" content={description} />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={displayTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={displayTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <link rel="canonical" href={canonicalURL} />
     <link
       rel="apple-touch-icon"
       sizes="180x180"
-      href="icon/apple-touch-icon.png"
+      href="/icon/apple-touch-icon.png"
     />
     <link
       rel="icon"
       type="image/png"
       sizes="32x32"
-      href="icon/favicon-32x32.png"
+      href="/icon/favicon-32x32.png"
     />
     <link
       rel="icon"
       type="image/png"
       sizes="16x16"
-      href="icon/favicon-16x16.png"
+      href="/icon/favicon-16x16.png"
     />
-    <link rel="manifest" href="icon/site.webmanifest" />
+    <link rel="manifest" href="/icon/site.webmanifest" />
     <meta name="msapplication-TileColor" content="#da532c" />
     <meta name="theme-color" content="#ffffff" />
     <link

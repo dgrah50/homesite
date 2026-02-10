@@ -11,12 +11,12 @@ const posts = (await getCollection("thoughts"))?.sort(
 );
 ---
 
-<Layout title="dayangrah.am - Project Blog" description="Project Blog">
+<Layout title="thoughts | dayangrah.am" description="Thoughts on software engineering, learning, and life by Dayan Graham.">
   <main
     class="w-full h-screen flex flex-col justify-start items-start max-w-3xl mx-auto p-8"
   >
     <BackButton />
-    <h1 class="text-4xl font-bold mb-4 text-neutral-100 font-mono">Posts</h1>
-    <ProjectList posts={posts} />
+    <h1 class="text-4xl font-bold mb-4 text-neutral-100 font-mono">thoughts</h1>
+    <ProjectList posts={posts} basePath="/thoughts" />
   </main>
 </Layout>

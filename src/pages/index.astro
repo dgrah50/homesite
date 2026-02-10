@@ -5,14 +5,12 @@ import HeroCard from "../components/HeroCard.astro";
 import Section from "../components/Section.astro";
 import { getCollection } from "astro:content";
 
-const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
-
-// Fetch the latest 3 entries for each collection
-const latestProjects = await getCollection("projects").then((projects) =>
-  projects
-    .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-    .slice(0, 3)
-);
+// Featured projects: latest 2 + magic table pinned at 3rd
+const allProjects = await getCollection("projects");
+const sorted = allProjects.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const top2 = sorted.filter((p) => p.id !== "magic-table").slice(0, 2);
+const magicTable = allProjects.find((p) => p.id === "magic-table");
+const latestProjects = magicTable ? [...top2, magicTable] : sorted.slice(0, 3);
 
 const latestThoughts = await getCollection("thoughts").then((thoughts) =>
   thoughts
@@ -20,44 +18,29 @@ const latestThoughts = await getCollection("thoughts").then((thoughts) =>
     .slice(0, 3)
 );
 
-const latestLearning = await getCollection("learning").then((learning) =>
-  learning
-    .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-    .slice(0, 3)
-);
-
 const sections = [
   {
     title: "some stuff i've built",
-    moreLink: `${baseUrl}/projects/`,
+    moreLink: "/projects/",
     cards: latestProjects.map((project) => ({
       title: project.data.title,
       body: project.data.description,
-      href: `${baseUrl}/projects/${project.slug}`,
+      href: `/projects/${project.id}`,
     })),
   },
   {
     title: "some stuff i've thought about",
-    moreLink: `${baseUrl}/thoughts/`,
+    moreLink: "/thoughts/",
     cards: latestThoughts.map((thought) => ({
       title: thought.data.title,
       body: thought.data.description,
-      href: `${baseUrl}/thoughts/${thought.slug}`,
-    })),
-  },
-  {
-    title: "some stuff i wanna learn",
-    moreLink: `${baseUrl}/learning/`,
-    cards: latestLearning.map((item) => ({
-      title: item.data.title,
-      body: item.data.description,
-      href: `${baseUrl}/learning/${item.slug}`,
+      href: `/thoughts/${thought.id}`,
     })),
   },
 ];
 ---
 
-<Layout title="dayangrah.am" description="Home">
+<Layout title="dayangrah.am" description="Dayan Graham - software engineer based in the Cayman Islands. Projects, thoughts, and more.">
   <div class="flex flex-col items-center text-black bg-background">
     <HeroCard class="my-8" />
     {
