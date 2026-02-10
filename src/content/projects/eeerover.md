@@ -1,43 +1,26 @@
 ---
-layout: ../../layouts/BlogLayout.astro
 pubDate: 2016-07-16
 title: "eeerover"
 technologies: ["C++", "Arduino", "ESP8266", "Custom PCB"]
 description: "a rugged-terrain rover with custom-made sensors."
 ---
 
-### Project Overview
+A WiFi-controlled rover built for a first-year university project. The task: navigate rough terrain and identify "rocks" by detecting the signals they emit — RF, ultrasound, infrared, and magnetic fields. Each rock emitted two of these, and you had to figure out which.
 
-The EEERover is a rugged-terrain rover developed as part of a university project. It detects various signals (infrared, RF, acoustic) and relays information via wifi to a mobile phone. The project uses an ESP8266 IoT platform, custom PCBs, and an H-bridge motor controller. The rover can detect radio signals, ultrasound signals, infrared pulses, and magnetic fields. The ESP8266 module is programmed with C++ code through the Arduino interface.
+### Constraints
 
-1. Radio signals
-2. Ultrasound signals
-3. Infrared pulses
-4. Magnetic fields
+- Had to fit through a 300mm gap
+- Budget: £50
+- Controlled remotely over WiFi via a phone
 
-Each rock was designed to emit two of these properties, challenging the rover's sensing capabilities.
+### How we built it
 
-### Key Design Requirements
+- **ESP8266** as the brain, programmed in C++ through the Arduino interface
+- **Custom PCBs** for sensor interfacing
+- **H-bridge motor controller** for driving
+- Four sensor types: RF receiver, ultrasonic transducer, IR detector, magnetometer
+- Data relayed over WiFi to a mobile phone in real-time
 
-1. **Remote Control**: The rover had to be controllable via a WiFi network, allowing for remote operation.
-2. **Size and Weight**: Designed to fit through a minimum gap of 300mm, emphasizing compact size and lightweight construction.
-3. **Maneuverability**: High maneuverability was crucial for optimal sensor positioning relative to the rocks.
-4. **Cost-Effective**: The project had a strict budget limit of £50.
-5. **Reliability**: Both the sensing system and physical construction needed to be highly reliable.
-6. **User-Friendly Control**: The interface for controlling the rover had to be intuitive and easy to use.
+The hardest part was cramming all those sensors into something small enough to fit the size constraint while keeping the sensor readings reliable. Power management was also tricky — balancing the ESP8266, motors, and sensors on limited battery.
 
-### Technical Challenges
-
-The project presented several technical challenges:
-
-1. **Sensor Integration**: Incorporating multiple sensors (RF, ultrasound, infrared, and magnetic) into a compact design.
-2. **Wireless Communication**: Implementing stable WiFi communication for remote control and data transmission.
-3. **Power Management**: Balancing power consumption with performance requirements within the size and weight constraints.
-4. **Signal Processing**: Developing algorithms to accurately interpret and distinguish between different rock properties.
-5. **Mechanical Design**: Creating a rugged chassis capable of navigating varied terrain while maintaining sensor alignment.
-
-The EEERover project successfully met these challenges, resulting in a functional prototype that demonstrated the feasibility of using multi-sensor rovers for mineral identification in remote or hazardous environments.
-
-
-
-[More details can be found here](https://dayangrah.am/work/eeerover).
+[Source code on GitHub](https://github.com/dgrah50/eeerover).

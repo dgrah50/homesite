@@ -1,32 +1,31 @@
 ---
-layout: ../../layouts/BlogLayout.astro
 pubDate: 2024-05-16
 title: "magic table"
 technologies: ["JavaScript", "HTML", "CSS", "Raspberry Pi"]
 description: "a futuristic coffee table"
 ---
 
-The Magic Table was inspired by a combination of a school project table and a Raspberry Pi lying around the house. It incorporates a TV inside the table and uses a Pimoroni Skywriter for mid-air gesture control. Inspired by the iPod Classic, the table uses circular motions to control volume. The display includes news, weather, Premier League updates, and cryptocurrency prices.
+<div style={{display: "flex", flexDirection: "column", gap: "2rem"}} className="md:!flex-row">
+<div style={{flex: 1, minWidth: 0}}>
 
-The Magic Table is a project that merges everyday furniture with some interesting tech. At its core, it features a Raspberry Pi that powers a high-definition touchscreen display. This setup allows for a variety of applications, from displaying information to controlling smart home devices.
+A coffee table with a screen inside it, controlled by waving your hand in the air. Started as a school project with a spare Raspberry Pi and a TV I wasn't using.
 
-One of the key aspects of the Magic Table is its use of the MagicMirror² platform. This open-source modular framework is typically used for smart mirrors, but I repurposed it to create a customizable interface for the table. It allows me to display real-time data like news, weather, and even social media updates, all in a modular format that can be tailored to my needs.
+It runs [MagicMirror²](https://magicmirror.builders/) — an open-source smart mirror platform — repurposed for a table. The display shows news, weather, Premier League scores, and crypto prices, all in a modular layout I can swap around.
 
-The gesture control is another fun feature. Using a Pimoroni Skywriter, I implemented mid-air gesture recognition, which lets users navigate the interface without touching the screen. This adds a layer of interactivity that feels quite futuristic, even if it’s just swiping to change the news feed.
+The fun part is the gesture control. A [Pimoroni Skywriter](https://shop.pimoroni.com/products/skywriter-hat) sits under the surface and detects mid-air hand movements. Inspired by the iPod Classic click wheel — circular motions control volume, swipes navigate between screens.
 
-The Raspberry Pi serves as the brain of the operation, handling all the processing and connectivity. It’s a great little device that can run the necessary software while being energy efficient. The modular nature of MagicMirror² means I can easily add or remove features as I see fit, making it a flexible solution for my needs.
+**How it's built:** Raspberry Pi drives everything — display, gesture input, data fetching. MagicMirror² handles the modular UI. Pimoroni Skywriter HAT does capacitive gesture recognition through the table surface.
 
-Overall, the Magic Table is a blend of practicality and tech experimentation. It’s not just about having a cool gadget; it’s about exploring how technology can enhance our daily lives in subtle ways.
-
-### Video
-
+</div>
+<div style={{flexShrink: 0, alignSelf: "flex-start"}} className="!w-full md:!w-[280px]">
 <iframe
   src="https://player.vimeo.com/video/459087483?h=20a804a490"
-  width="320"
-  height="569"
-  frameborder="0"
+  width="100%"
+  height="500"
+  style={{border: 0, borderRadius: "8px"}}
   allow="autoplay; fullscreen; picture-in-picture"
-  allowfullscreen
+  allowFullScreen
+  loading="lazy"
 ></iframe>
-
-[More details can be found here](https://dayangrah.am/work/magic-table).
+</div>
+</div>

@@ -1,14 +1,13 @@
 ---
-layout: ../../layouts/BlogLayout.astro
 pubDate: 2024-07-16
 title: "finishing"
 description: "done is better than perfect"
 ---
 
-As a software engineer, I often find myself excited by new technologies and eager to dive into solving problems with the latest tools. However, this enthusiasm can sometimes lead me to overlook the potential drawbacks or limitations of these new solutions. With growing experience, I've come to recognize that technology, much like fashion, tends to cycle through trends. While innovation certainly occurs, many fundamental ideas and concepts endure.
+I used to chase every new framework and language that came out. Shiny new tool? I'm there. But the older I get, the more I notice that tech trends cycle. The ideas stick around; the names change.
 
-This realization has shifted my approach. Instead of constantly chasing the newest trend, I now see the value in mastering one or two programming languages thoroughly. Interestingly, the rise of AI has made it easier than ever to become productive in a new language quickly. However, what I find most crucial is developing a deep understanding of core concepts in a single base language (or even pseudocode). This foundational knowledge allows me to translate ideas effectively into whatever language I'm working with.
+These days I'd rather go deep in one or two languages than spread thin across ten. Ironically, AI has made it faster than ever to pick up a new language — but that only makes depth in your base language more valuable, not less. If you can think clearly in one language, you can translate that thinking anywhere.
 
-I've come to believe that without sufficient depth in at least one language, our ability to conceptualize complex problems and solutions can be limited. It's not just about knowing syntax; it's about thinking in the language and understanding its paradigms deeply. This depth enables us to see patterns, anticipate issues, and create more elegant solutions across different technologies.
+Without that depth, you end up knowing a bit of everything and not enough of anything. You can write the syntax but you can't see the patterns. You fix the bug but you don't understand why it happened.
 
-By focusing on mastering core concepts and languages, we can avoid repeating past mistakes and build upon the solid foundations laid by those before us. This approach doesn't mean ignoring new technologies, but rather approaching them with a critical eye and a wealth of experience to draw upon.
+I'm not saying ignore new tech. Just approach it with enough experience to know when it's genuinely better and when it's just different.

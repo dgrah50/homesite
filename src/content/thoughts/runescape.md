@@ -1,5 +1,4 @@
 ---
-layout: ../../layouts/BlogLayout.astro
 pubDate: 2024-07-16
 title: "runescape"
 description: "training wheels for life"
@@ -7,7 +6,7 @@ description: "training wheels for life"
 
 Man, the older I get, the more I realize how much RuneScape shaped my online smarts. It's wild to think about, but that game was basically my crash course in internet street smarts and life skills.
 
-Take online scams, for instance. RuneScape was like Scam Prevention 101. (shout out to those "armor trimming" scammers). Those basically taught me to keep my eyes peeled and not trust everyone the internet. Honestly, it's a lesson that's only gotten more crucial as we've dived deeper into the digital age.
+Take online scams, for instance. RuneScape was like Scam Prevention 101. (shout out to those "armor trimming" scammers). Those basically taught me to keep my eyes peeled and not trust everyone on the internet. Honestly, it's a lesson that's only gotten more crucial as we've dived deeper into the digital age.
 
 And then there's the economics lessons. The Grand Exchange was basically my first taste of how markets work. Watching item prices go nuts because of some in-game event was like a mini stock market simulation. Without even realizing it, I was picking up on supply and demand concepts that some folks don't grasp until way later.
 
