@@ -39,7 +39,7 @@ intro is actually shown; repeat visits do not fetch its geometry or audio.
 ## Startup and parallel preparation
 
 The eligibility script conditionally preloads the opening animation tables and
-packed chamber meshes while JavaScript loads. Meshes use the exact Float32
+packed chamber meshes and prepared textures while JavaScript loads. Meshes use the exact Float32
 attributes already uploaded by Three.js and the original triangle indices. A
 130 KB gzip binary replaces the roughly 281 KB compressed JSON download; the
 source JSON remains available as a fallback for browsers without native gzip
@@ -53,12 +53,32 @@ Web Audio buffer scheduling preserves sound unlocking, muting and resume offsets
 The synthesizer and original data stay in the repository for reproducibility;
 neither is downloaded by the normal playback path.
 
+The build generates the fixed normalization cubes, rough normal map, glow,
+plasma textures, unit spheres and prepared camera path in `opening.bin.gz` (131 KB). Reflected texture
+planes are shared and integer predictors reduce download weight without losing
+any pixel values. The main sphere retains Float64 unit vectors so its original
+deformation remains unchanged. A worker expands these assets while the renderer
+module downloads and the browser decodes audio. The document consumes its own
+preload and transfers the result to the worker, avoiding a duplicate worker fetch.
+
+The build also generates `finale.bin.gz` (274 KB): packed DG meshes, smoothed
+heights, and each field pixel's nearest-edge lookup and inside/outside flag.
+The worker restores exact Float32 distances and derivatives in a linear pass;
+it no longer searches contours or performs Gaussian smoothing. It also expands
+the regular crater mesh outside the rendering thread. Storing redundant full
+RGBA fields and mesh grids would make downloads much larger, so the worker
+expands those from their compact, lossless representation instead.
+
 Normal playback creates only the opening scene before starting its clock. Then
-the finale module and a small worker load concurrently. The worker fetches and
-parses DG geometry, computes the unchanged crater height field, transfers its
-arrays, and terminates. The renderer warms the finale in a 1×1 offscreen target
-to upload textures and compile shaders before the visible handoff. Still-frame
-previews at or after 5.25 seconds wait for the finale before rendering.
+the finale module and prepared finale download concurrently with playback.
+The worker transfers its buffers and terminates. The renderer warms the finale
+in a 1×1 offscreen target to upload textures and compile shaders before the
+visible handoff. Still-frame previews at or after 5.25 seconds wait for the finale.
+Per-frame blob deformation, camera motion and GPU lighting remain real-time.
+
+The portfolio portrait is resized to 384×384 at build time for its 192-pixel
+rendered size. The resulting WebP is about 14 KB instead of 235 KB, reducing
+competition for splash downloads while retaining 2× display resolution.
 
 Skip, initialization failure and dismissal abort playback fetches and
 terminate the worker. If the finale cannot be prepared by 5.25 seconds, playback
@@ -70,11 +90,14 @@ To regenerate committed assets, use Node 24 and FFmpeg with libopus and AAC:
 ```sh
 npm run generate:splash-audio
 npm run generate:splash-geometry
+npm run generate:splash-visuals
 ```
 
-CI serves the committed exports without requiring FFmpeg. Tests verify their
+`npm run build` and the Pages workflow regenerate visual assets automatically.
+The audio exports are committed so CI does not require FFmpeg. Tests verify their
 hashes against the synthesis sources and compare every packed vertex attribute
-and triangle index with the original JSON. In preview mode, the splash exposes
+and triangle index with the original JSON, all generated texture bytes, crater
+values and grid vertices, and source sphere precision at animated sample times. In preview mode, the splash exposes
 `data-startup-ms` (time from navigation to first render), `data-setup-ms` (time
 from controller initialization), and `data-finale-ready-ms` on the canvas for
 local diagnostics; these measurements are not sent anywhere.
@@ -101,8 +124,8 @@ and resume, and dismissal during loading. Worker tests cover delivery, asset
 failure and cancellation with queued replies. Framing tests cover portrait phones,
 a tablet, landscape phones, desktop and ultrawide displays. Live browser checks covered 390×844 and 844×390 rendering,
 the early chamber, the takeover, automatic dismissal, Skip, default-enabled sound, autoplay unlocking and mute behavior.
-Actual iOS Safari performance and browser chrome behavior still need a physical
-phone check before deployment.
+Actual iOS Safari performance and browser chrome behavior have not been measured
+on a physical phone.
 
 ## Measured startup
 
@@ -113,10 +136,17 @@ The measurement ends after the first rendered frame; it excludes the subsequent
 eight-second playback. These are lab comparisons, not physical-phone or field
 measurements.
 
-| Connection | Previous implementation | Optimized implementation |
-| --- | ---: | ---: |
-| 5 Mbps | 2.37 s | 1.55 s |
-| 1 Mbps | 9.00 s | 5.59 s |
+| Connection | Initial integration | Audio/mesh optimization | Build-time visuals |
+| --- | ---: | ---: | ---: |
+| 5 Mbps | 2.37 s | 1.55 s | 1.52 s |
+| 1 Mbps | 9.00 s | 5.59 s | 5.71 s |
+
+The earlier runs used the same setup but occurred separately, so small differences
+are within run-to-run variation. Build-time preparation removes fixed CPU work;
+it does not materially change network-limited first-frame time. With the new
+assets, the finale was ready 2.84 seconds after the first frame at 1 Mbps, before
+the 5.25-second deadline. A contemporaneous baseline run took 1.59 s at 5 Mbps
+and 5.89 s at 1 Mbps. These single samples should not be treated as field averages.
 
 At 1 Mbps the DG finale was ready 2.37 seconds into playback, before the 5.25-second
 deadline. Matching screenshots at 3 and 7 seconds were pixel-identical at

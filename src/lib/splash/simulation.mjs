@@ -227,3 +227,9 @@ export function deformSphere(unitPositions,simulation,out=new Float32Array(unitP
   }
   return out;
 }
+
+// Attach the small transform function after the baked camera crosses the worker.
+export function restoreCamera(camera) {
+  const {x,y,z}=camera;
+  return {...camera,transform:p=>add(add(mul(x,p[0]),mul(y,p[1])),mul(z,p[2]))};
+}

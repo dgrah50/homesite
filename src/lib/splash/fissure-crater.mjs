@@ -7,14 +7,14 @@ import {craterField} from './crater-field.mjs';
 
 export function fissureCrater(polygons,uniforms,preparedField=null){
   const field=preparedField||craterField(polygons),cols=257,rows=205,positions=[],uv=[],indices=[];
-  for(let j=0;j<rows;j++)for(let i=0;i<cols;i++){
+  if(!field.geometry)for(let j=0;j<rows;j++)for(let i=0;i<cols;i++){
     const u=i/(cols-1),v=j/(rows-1),h=field.heights[(j*2)*field.width+i*2];
     positions.push(-54+108*u,-132.135+h,-43+86*v);uv.push(u,v);
     if(i<cols-1&&j<rows-1){const a=j*cols+i;indices.push(a,a+1,a+cols,a+1,a+cols+1,a+cols);}
   }
   const geometry=new THREE.BufferGeometry();
-  geometry.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));
-  geometry.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));geometry.setIndex(indices);
+  geometry.setAttribute('position',new THREE.BufferAttribute(field.geometry?.positions || Float32Array.from(positions),3));
+  geometry.setAttribute('uv',new THREE.BufferAttribute(field.geometry?.uv || Float32Array.from(uv),2));geometry.setIndex(field.geometry ? new THREE.BufferAttribute(field.geometry.indices,1) : indices);
   const map=new THREE.DataTexture(field.texels,field.width,field.height,THREE.RGBAFormat,THREE.FloatType);
   map.minFilter=map.magFilter=THREE.LinearFilter;map.generateMipmaps=false;map.needsUpdate=true;
   const lighting={rimTint:{value:new THREE.Vector3()},floorTint:{value:new THREE.Vector3()},coreTint:{value:new THREE.Vector3()},haloTint:{value:new THREE.Vector3()},

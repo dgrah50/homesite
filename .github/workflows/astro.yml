@@ -67,6 +67,8 @@ jobs:
         working-directory: ${{ env.BUILD_PATH }}
       - name: Validate splash and types
         run: |
+          npm run generate:splash-geometry
+          npm run generate:splash-visuals
           npm run test:splash
           npm run astro -- check
         working-directory: ${{ env.BUILD_PATH }}

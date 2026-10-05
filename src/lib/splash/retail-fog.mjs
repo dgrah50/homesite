@@ -3,7 +3,7 @@ import {intensityTextures,glowTexture} from './retail-materials.mjs';
 import {clamp} from './simulation.mjs';
 const quadVertex='varying vec2 vUV;void main(){vUV=uv;gl_Position=vec4(position.xy,0.,1.);}';
 
-export function retailFog(renderer,scene,camera,objects,simulation,{highQuality=false}={}){
+export function retailFog(renderer,scene,camera,objects,simulation,{highQuality=false,prepared=null}={}){
   const target=new THREE.WebGLRenderTarget(640,480,{samples:highQuality?4:0});target.depthTexture=new THREE.DepthTexture(640,480);
   const bufferSize=new THREE.Vector2();
   const intensityTarget=new THREE.WebGLRenderTarget(1024,512);
@@ -18,12 +18,12 @@ export function retailFog(renderer,scene,camera,objects,simulation,{highQuality=
     fragmentShader:`uniform float radius;uniform vec2 center;uniform float aspect;varying vec2 vUV;void main(){vec2 p=(vUV*2.-1.)*vec2(radius*.005,radius*.005*aspect)+center;float r=clamp(1.-dot(p,p),0.,1.);gl_FragColor=vec4(vec3(r*r),1.);}`}));
   backdrop.renderOrder=-1;intensityScene.add(backdrop);
   for(const mesh of objects.children){const copy=new THREE.Mesh(mesh.geometry,depthMaterial);copy.matrixAutoUpdate=false;fogObjects.add(copy);}
-  const plasma=intensityTextures(256,3,425,simulation.plasmaSeed,true).map(a=>{
-    const rgba=new Uint8Array(256*256*4);for(let i=0;i<a.length;i++){rgba[i*4+3]=a[i];}
+  const plasma=(prepared?.plasma || intensityTextures(256,3,425,simulation.plasmaSeed,true)).map(a=>{
+    const rgba=prepared?a:new Uint8Array(256*256*4);if(!prepared)for(let i=0;i<a.length;i++){rgba[i*4+3]=a[i];}
     const tex=new THREE.DataTexture(rgba,256,256);tex.wrapS=tex.wrapT=THREE.RepeatWrapping;tex.minFilter=tex.magFilter=THREE.LinearFilter;tex.generateMipmaps=false;tex.needsUpdate=true;return tex;
   });
   const outputUniforms={frame:{value:target.texture},depth:{value:target.depthTexture},intensityMap:{value:intensityTarget.texture},
-    plasma0:{value:plasma[0]},plasma1:{value:plasma[1]},plasma2:{value:plasma[2]},glowMap:{value:glowTexture()},
+    plasma0:{value:plasma[0]},plasma1:{value:plasma[1]},plasma2:{value:plasma[2]},glowMap:{value:glowTexture(prepared?.glow[0])},
     shifts:{value:[new THREE.Vector2(),new THREE.Vector2(),new THREE.Vector2()]},scales:{value:new THREE.Vector2()},
     fogIntensity:{value:0},screenGlow:{value:0},circleAlpha:{value:0},circleMul:{value:1},fogOn:{value:false},logoOn:{value:false}};
   const outputScene=new THREE.Scene();outputScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2,2),new THREE.ShaderMaterial({uniforms:outputUniforms,depthTest:false,depthWrite:false,

@@ -1,8 +1,9 @@
 ---
 import geometryUrl from "../assets/splash/retail-geometry.bin.gz?url";
+import openingUrl from "../assets/splash/opening.bin.gz?url";
 ---
 
-<script is:inline define:vars={{ geometryUrl }}>
+<script is:inline define:vars={{ geometryUrl, openingUrl }}>
   (() => {
     const query = new URLSearchParams(location.search);
     const preview = query.get("intro") === "preview";
@@ -23,7 +24,7 @@ import geometryUrl from "../assets/splash/retail-geometry.bin.gz?url";
     // Visitors who bypass the intro never request them.
     const meshes = typeof DecompressionStream === "function"
       ? geometryUrl : "/splash/retail-geometry.json";
-    for (const url of ["/splash/retail.json", meshes]) {
+    for (const url of ["/splash/retail.json", meshes, ...(typeof DecompressionStream === "function" ? [openingUrl] : [])]) {
       const preload = document.createElement("link");
       preload.rel = "preload";
       preload.as = "fetch";

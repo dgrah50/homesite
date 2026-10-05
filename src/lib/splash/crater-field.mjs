@@ -12,7 +12,10 @@ const distance2 = (x, z, s) => {
 
 // A single rounded height field, not scaled copies of the contour. Distance to
 // both the outside edge and the counter controls one continuous recessed bowl.
-export function craterField(polygons, { width = 513, height = 409 } = {}) {
+export function craterField(
+  polygons,
+  { width = 513, height = 409, prepare = false } = {},
+) {
   const bounds = { x0: -54, x1: 54, z0: -43, z1: 43 },
     dx = 108 / (width - 1),
     dz = 86 / (height - 1);
@@ -51,6 +54,12 @@ export function craterField(polygons, { width = 513, height = 409 } = {}) {
     for (let j = minZ; j <= maxZ; j++)
       for (let i = minX; i <= maxX; i++) bins[j * nx + i].push(s);
   }
+  if (prepare && segments.length > 32767)
+    throw new Error("Too many crater segments for the edge lookup.");
+  const edges = prepare ? new Uint16Array(width * height) : null;
+  const segmentIds = prepare
+    ? new Map(segments.map((s, i) => [s, i + 1]))
+    : null;
   const distances = new Float32Array(width * height),
     raw = new Float32Array(width * height);
   for (let j = 0; j < height; j++) {
@@ -71,7 +80,8 @@ export function craterField(polygons, { width = 513, height = 409 } = {}) {
         bx = Math.floor((x + 54) / cell),
         bz = Math.floor((z + 43) / cell),
         radius = inside ? 2 : 1;
-      let nearest = 1024;
+      let nearest = 1024,
+        nearestId = 0;
       for (
         let yy = Math.max(0, bz - radius);
         yy <= Math.min(nz - 1, bz + radius);
@@ -82,8 +92,14 @@ export function craterField(polygons, { width = 513, height = 409 } = {}) {
           xx <= Math.min(nx - 1, bx + radius);
           xx++
         )
-          for (const s of bins[yy * nx + xx])
-            nearest = Math.min(nearest, distance2(x, z, s));
+          for (const s of bins[yy * nx + xx]) {
+            const d = distance2(x, z, s);
+            if (d < nearest) {
+              nearest = d;
+              if (prepare) nearestId = segmentIds.get(s);
+            }
+          }
+      if (prepare) edges[k] = nearestId | (inside ? 0 : 32768);
       const d = Math.sqrt(nearest);
       distances[k] = inside ? d : -d;
       // The narrow six-unit join needs a shallower sill at the authored oblique
@@ -140,5 +156,20 @@ export function craterField(polygons, { width = 513, height = 409 } = {}) {
         k * 4,
       );
     }
-  return { width, height, bounds, distances, heights, texels };
+  return {
+    width,
+    height,
+    bounds,
+    distances,
+    heights,
+    texels,
+    ...(prepare
+      ? {
+          edges,
+          segments: Float64Array.from(
+            segments.flatMap((s) => [s.x, s.z, s.dx, s.dz, s.length2]),
+          ),
+        }
+      : {}),
+  };
 }
