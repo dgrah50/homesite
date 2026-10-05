@@ -13,6 +13,7 @@ import {
 import {
   BlobSimulation,
   makeCamera,
+  restoreCamera,
   sampleCamera,
   cameraTime,
   cubeSphere,
@@ -21,15 +22,21 @@ import {
 } from "./simulation.mjs";
 import { logoRenderState } from "./fissure-transition.mjs";
 import { splashFraming } from "./framing.mjs";
+import finaleUrl from "../../assets/splash/finale.bin.gz?url";
 import { prepareFinale } from "./finale.mjs";
 import { loadGeometry } from "./geometry.mjs";
 
-export async function createSplash(canvas, domain, { signal } = {}) {
+export async function createSplash(
+  canvas,
+  domain,
+  { signal, opening = null } = {},
+) {
   const load = async (name) => {
     const response = await fetch(`/splash/${name}.json`, { signal });
     if (!response.ok) throw new Error(`Splash asset ${name} failed to load.`);
     return response.json();
   };
+  const packed = typeof DecompressionStream === "function";
   const [data, meshes] = await Promise.all([
     load("retail"),
     loadGeometry(signal),
@@ -49,8 +56,11 @@ export async function createSplash(canvas, domain, { signal } = {}) {
     const camera = new THREE.PerspectiveCamera(45, 4 / 3, 0.4, 800);
     camera.up.set(0, 0, 1);
     const simulation = new BlobSimulation();
-    const cubes = [normalizationCube(64), normalizationCube(256)],
-      rough = roughNormalTexture();
+    const cubes = [
+        normalizationCube(64, opening?.textures.cube64),
+        normalizationCube(256, opening?.textures.cube256),
+      ],
+      rough = roughNormalTexture(opening?.textures.rough[0]);
     const { objects, advance } = buildScene(
       data,
       (kind) => sceneMaterial(kind, cubes, rough, simulation),
@@ -60,7 +70,7 @@ export async function createSplash(canvas, domain, { signal } = {}) {
     for (const mesh of objects.children)
       mesh.onBeforeRender = () => mesh.material.userData.update(mesh);
     const scenery = chamberVisibility(objects);
-    const unit = cubeSphere(),
+    const unit = opening?.unit || cubeSphere(),
       deformed = new Float32Array(unit.positions.length),
       normals = new Float32Array(unit.positions.length);
     const geometry = new THREE.BufferGeometry();
@@ -79,7 +89,7 @@ export async function createSplash(canvas, domain, { signal } = {}) {
     blob.frustumCulled = false;
     blob.renderOrder = 2;
     scene.add(blob);
-    const smallUnit = cubeSphere(4),
+    const smallUnit = opening?.smallUnit || cubeSphere(4),
       smallGeometry = new THREE.BufferGeometry();
     smallGeometry.setAttribute(
       "position",
@@ -98,7 +108,7 @@ export async function createSplash(canvas, domain, { signal } = {}) {
     });
     const halo = new THREE.Sprite(
       new THREE.SpriteMaterial({
-        map: glowTexture(),
+        map: glowTexture(opening?.textures.glow[0]),
         color: new THREE.Color(160 / 255, 1, 64 / 255),
         blending: THREE.AdditiveBlending,
         depthWrite: false,
@@ -107,13 +117,16 @@ export async function createSplash(canvas, domain, { signal } = {}) {
     );
     halo.renderOrder = 1;
     scene.add(halo);
-    const path = makeCamera(data.cameraPaths[0]);
+    const path = opening
+      ? restoreCamera(opening.camera)
+      : makeCamera(data.cameraPaths[0]);
     const emptyFinale = new THREE.Scene();
     let logo,
       finaleLoading,
       finaleReady = false;
     const fog = retailFog(renderer, scene, camera, objects, simulation, {
       highQuality: true,
+      prepared: opening?.textures,
     });
     const shadows = retailShadows(renderer, objects, simulation);
     let time = 0,
@@ -121,11 +134,15 @@ export async function createSplash(canvas, domain, { signal } = {}) {
       width = 0,
       height = 0;
 
-    // Start after the opening frame. The worker also parses the finale JSON;
-    // transferring its buffers avoids copying the calculated height field.
+    // The finale downloads while the opening plays; decompression and expansion
+    // run in a worker, which transfers the finished buffers without copying.
     function prepare() {
       return (finaleLoading ||= Promise.all([
-        prepareFinale(signal),
+        prepareFinale(
+          signal,
+          undefined,
+          packed ? finaleUrl : "/splash/dg.json",
+        ),
         import("./retail-logo.mjs"),
       ]).then(([{ study, field }, { retailLogo }]) => {
         if (disposed) return;

@@ -25,8 +25,8 @@ export function retailLogo(data,{custom=null,style='retail',contours=null,prepar
   const tmTexture=new THREE.DataTexture(tmPixels,16,16);tmTexture.minFilter=tmTexture.magFilter=THREE.LinearFilter;tmTexture.needsUpdate=true;
   let text;
   for(const [name,a] of Object.entries(custom||data.logo)){
-    const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(a.positions.flat(),3));geometry.setIndex(a.indices);
-    if(a.uv){let uv=a.uv.flat();if(name.includes('surfacetop'))uv=uv.map((v,i)=>i%2&&Math.abs(v-1)<=.01?-1:v);geometry.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));}
+    const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(a.positions.flat?.() || a.positions,3));geometry.setIndex(a.indices);
+    if(a.uv){let uv=a.uv.flat?.() || a.uv;if(name.includes('surfacetop'))uv=uv.map((v,i)=>i%2&&Math.abs(v-1)<=.01?-1:v);geometry.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));}
     let material;
     if(name==='text_0')material=new THREE.MeshBasicMaterial({color:new THREE.Color(98/255,202/255,19/255),side:THREE.FrontSide,depthTest:false});
     else if(name.startsWith('tm_'))material=new THREE.MeshBasicMaterial({map:tmTexture,transparent:true,side:THREE.FrontSide,depthTest:false});

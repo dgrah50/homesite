@@ -10,7 +10,9 @@
     "astro": "astro",
     "test:splash": "node --experimental-strip-types --test tests/splash-*.test.mjs",
     "generate:splash-audio": "node scripts/generate-splash-audio.mjs",
-    "generate:splash-geometry": "node scripts/generate-splash-geometry.mjs"
+    "generate:splash-geometry": "node scripts/generate-splash-geometry.mjs",
+    "generate:splash-visuals": "node scripts/generate-splash-visuals.mjs",
+    "prebuild": "npm run generate:splash-geometry && npm run generate:splash-visuals"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.10",

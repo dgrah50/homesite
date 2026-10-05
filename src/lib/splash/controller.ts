@@ -1,3 +1,4 @@
+import { prepareOpening } from "./opening.mjs";
 import { createSplashAudio } from "./audio";
 import type { createSplash } from "./runtime.js";
 
@@ -189,9 +190,12 @@ export async function initSplash() {
   audio.start();
 
   try {
-    const { createSplash } = await import("./runtime.js");
+    const [{ createSplash }, opening] = await Promise.all([
+      import("./runtime.js"),
+      prepareOpening(signal),
+    ]);
     if (finished) return;
-    engine = await createSplash(canvas, domain, { signal });
+    engine = await createSplash(canvas, domain, { signal, opening });
     if (finished) {
       engine.dispose();
       return;
