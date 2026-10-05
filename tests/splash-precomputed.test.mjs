@@ -3,7 +3,14 @@ import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { gunzipSync } from "node:zlib";
-import { unpackPrepared } from "../src/lib/splash/prepared-pack.mjs";
+import {
+  unpackPrepared,
+  packPrepared,
+  predictIndices,
+  restoreIndices,
+  predictHeights,
+  restoreHeights,
+} from "../src/lib/splash/prepared-pack.mjs";
 import {
   restoreOpening,
   restoreFinale,
@@ -31,6 +38,32 @@ function asset(name) {
     bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength),
   );
 }
+test("lossless predictors retain asymmetric float bits and wrapping indices", () => {
+  for (const [width, height] of [
+    [3, 3],
+    [4, 4],
+  ]) {
+    const bits = Uint32Array.from(
+      { length: width * height },
+      (_, i) => [0, 0x80000000, 0x3f800001, 0xbf800001, 0x7f7fffff][i % 5],
+    );
+    const decoded = restoreHeights(
+      predictHeights(new Float32Array(bits.buffer), width, height),
+      width,
+      height,
+    );
+    assert.deepEqual(new Uint32Array(decoded.buffer), bits);
+  }
+  for (const Type of [Uint16Array, Uint32Array]) {
+    const indices = Type.from([0, 65535, 1, 42, 0, 65536, 3]);
+    assert.deepEqual(restoreIndices(predictIndices(indices)), indices);
+  }
+  const floats = Float32Array.of(0, -0, 1);
+  const packed = packPrepared({}, { a: floats, b: floats.slice() });
+  const { arrays } = unpackPrepared(packed.buffer);
+  assert.deepEqual(arrays.a, floats);
+  assert.equal(arrays.a.byteOffset, arrays.b.byteOffset);
+});
 test("prepared textures preserve every byte, face orientation and source sphere precision", () => {
   const opening = restoreOpening(asset("opening"));
   for (const size of [64, 256])

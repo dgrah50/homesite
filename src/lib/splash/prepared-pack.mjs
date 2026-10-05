@@ -18,12 +18,25 @@ export function packPrepared(metadata, arrays) {
       (key) => array.constructor === types[key],
     );
     if (!type) throw new Error("Unsupported prepared array.");
-    header.arrays[name] = { type, offset, count: array.length };
-    chunks.push({
-      offset,
-      bytes: new Uint8Array(array.buffer, array.byteOffset, array.byteLength),
-    });
-    offset += align(array.byteLength);
+    const bytes = new Uint8Array(
+      array.buffer,
+      array.byteOffset,
+      array.byteLength,
+    );
+    const shared = chunks.find(
+      (chunk) =>
+        chunk.bytes.length === bytes.length &&
+        bytes.every((value, i) => value === chunk.bytes[i]),
+    );
+    header.arrays[name] = {
+      type,
+      offset: shared?.offset ?? offset,
+      count: array.length,
+    };
+    if (!shared) {
+      chunks.push({ offset, bytes });
+      offset += align(array.byteLength);
+    }
   }
   const json = new TextEncoder().encode(JSON.stringify(header)),
     start = align(8 + json.length);
@@ -73,6 +86,64 @@ export function restorePlane(bytes, width) {
       (i >= width ? pixels[i - width] : 0) -
       (i >= width && i % width ? pixels[i - width - 1] : 0);
   return pixels;
+}
+
+export function predictRow(pixels, width) {
+  return Uint8Array.from(
+    pixels,
+    (value, i) => value - (i % width ? pixels[i - 1] : 0),
+  );
+}
+export function restoreRow(bytes, width) {
+  const pixels = new Uint8Array(bytes.length);
+  for (let i = 0; i < pixels.length; i++)
+    pixels[i] = bytes[i] + (i % width ? pixels[i - 1] : 0);
+  return pixels;
+}
+
+// Integer differences wrap in the source index type; no precision is discarded.
+export function predictIndices(indices) {
+  return indices.map((value, i) => value - (i ? indices[i - 1] : 0));
+}
+export function restoreIndices(bytes) {
+  const indices = bytes.slice();
+  for (let i = 1; i < indices.length; i++) indices[i] += indices[i - 1];
+  return indices;
+}
+
+// Share the mirrored quarter's float bits, retaining every asymmetric bit as an
+// XOR residual. Byte planes let gzip compress the long runs of equal exponents.
+export function predictHeights(heights, width, height) {
+  const bits = new Uint32Array(
+    heights.buffer,
+    heights.byteOffset,
+    heights.length,
+  );
+  const bytes = new Uint8Array(heights.byteLength);
+  for (let y = 0; y < height; y++)
+    for (let x = 0; x < width; x++) {
+      const i = y * width + x;
+      const source =
+        Math.min(y, height - 1 - y) * width + Math.min(x, width - 1 - x);
+      const residual = i === source ? bits[i] : bits[i] ^ bits[source];
+      for (let c = 0; c < 4; c++)
+        bytes[c * heights.length + i] = residual >>> (c * 8);
+    }
+  return bytes;
+}
+export function restoreHeights(bytes, width, height) {
+  const count = width * height,
+    bits = new Uint32Array(count);
+  for (let y = 0; y < height; y++)
+    for (let x = 0; x < width; x++) {
+      const i = y * width + x;
+      let residual = 0;
+      for (let c = 0; c < 4; c++) residual |= bytes[c * count + i] << (c * 8);
+      const source =
+        Math.min(y, height - 1 - y) * width + Math.min(x, width - 1 - x);
+      bits[i] = i === source ? residual : residual ^ bits[source];
+    }
+  return new Float32Array(bits.buffer);
 }
 
 // Source-order square/diamond prediction removes interpolated pixels from the

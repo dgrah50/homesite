@@ -1,15 +1,24 @@
-import { restorePlane, restoreIntensity } from "./prepared-pack.mjs";
+import {
+  restorePlane,
+  restoreIntensity,
+  restoreRow,
+  restoreIndices,
+  restoreHeights,
+} from "./prepared-pack.mjs";
 
 export function restoreOpening({ metadata, arrays }) {
   const textures = {};
-  for (const [name, { size, planes, faces, prediction }] of Object.entries(
+  for (const [name, { size, planes, faces }] of Object.entries(
     metadata.textures,
   )) {
-    const decoded = planes.map((key) =>
-      (prediction === "intensity" ? restoreIntensity : restorePlane)(
-        arrays[key],
-        size,
-      ),
+    const restorers = {
+      row: restoreRow,
+      plane: restorePlane,
+      intensity: restoreIntensity,
+      raw: (bytes) => bytes,
+    };
+    const decoded = planes.map(({ key, prediction }) =>
+      restorers[prediction](arrays[key], size),
     );
     textures[name] = faces.map((channels) => {
       const rgba = new Uint8Array(size * size * 4);
@@ -37,11 +46,11 @@ export function restoreOpening({ metadata, arrays }) {
     data: metadata.data,
     unit: {
       positions: Array.from(arrays.unit),
-      indices: Array.from(arrays.unitIndices),
+      indices: Array.from(restoreIndices(arrays.unitIndices)),
     },
     smallUnit: {
       positions: arrays.smallUnit,
-      indices: Array.from(arrays.smallIndices),
+      indices: Array.from(restoreIndices(arrays.smallIndices)),
     },
   };
 }
@@ -52,7 +61,7 @@ export function restoreFinale({ metadata, arrays }) {
   const { width, height, bounds } = metadata.field;
   const dx = (bounds.x1 - bounds.x0) / (width - 1),
     dz = (bounds.z1 - bounds.z0) / (height - 1);
-  const heights = arrays.heights,
+  const heights = restoreHeights(arrays.heights, width, height),
     distances = new Float32Array(width * height),
     texels = new Float32Array(width * height * 4);
   for (let j = 0; j < height; j++)
@@ -96,7 +105,9 @@ export function restoreFinale({ metadata, arrays }) {
     logo[name] = {};
     for (const [field, key] of Object.entries(keys))
       logo[name][field] =
-        field === "indices" ? Array.from(arrays[key]) : arrays[key];
+        field === "indices"
+          ? Array.from(restoreIndices(arrays[key]))
+          : arrays[key];
   }
   const geometry = craterGeometry({ width, height, heights });
   return {

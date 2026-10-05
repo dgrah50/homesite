@@ -7,6 +7,8 @@
     "start": "astro dev",
     "build": "astro check && astro build",
     "preview": "astro preview",
+    "postbuild": "npm run check:splash-size",
+    "check:splash-size": "node scripts/check-splash-size.mjs",
     "astro": "astro",
     "test:splash": "node --experimental-strip-types --test tests/splash-*.test.mjs",
     "generate:splash-audio": "node scripts/generate-splash-audio.mjs",

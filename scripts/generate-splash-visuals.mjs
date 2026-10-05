@@ -16,6 +16,9 @@ import {
   packPrepared,
   predictPlane,
   predictIntensity,
+  predictRow,
+  predictIndices,
+  predictHeights,
 } from "../src/lib/splash/prepared-pack.mjs";
 
 const arrays = {},
@@ -62,15 +65,27 @@ function addTexture(name, size, faces) {
   }
   const planes = unique.map((p, i) => {
     const key = `${name}_${i}`;
-    arrays[key] =
-      name === "plasma" ? predictIntensity(p, size) : predictPlane(p, size);
-    return key;
+    const candidates =
+      name === "plasma"
+        ? [{ prediction: "intensity", bytes: predictIntensity(p, size) }]
+        : [
+            { prediction: "raw", bytes: p },
+            { prediction: "row", bytes: predictRow(p, size) },
+            { prediction: "plane", bytes: predictPlane(p, size) },
+          ];
+    const smallest = candidates
+      .map((candidate) => ({
+        ...candidate,
+        size: gzipSync(candidate.bytes, { level: 9 }).length,
+      }))
+      .sort((a, b) => a.size - b.size)[0];
+    arrays[key] = smallest.bytes;
+    return { key, prediction: smallest.prediction };
   });
   textures[name] = {
     size,
     planes,
     faces: recipes,
-    prediction: name === "plasma" ? "intensity" : "plane",
   };
 }
 for (const size of [64, 256])
@@ -96,9 +111,9 @@ addTexture("plasma", 256, plasma);
 const unit = cubeSphere(),
   small = cubeSphere(4);
 arrays.unit = Float64Array.from(unit.positions);
-arrays.unitIndices = Uint16Array.from(unit.indices);
+arrays.unitIndices = predictIndices(Uint16Array.from(unit.indices));
 arrays.smallUnit = Float32Array.from(small.positions);
-arrays.smallIndices = Uint16Array.from(small.indices);
+arrays.smallIndices = predictIndices(Uint16Array.from(small.indices));
 function write(name, metadata, arrays) {
   const bytes = gzipSync(packPrepared(metadata, arrays), { level: 9 });
   writeFileSync(
@@ -128,7 +143,7 @@ const study = JSON.parse(
 );
 const field = craterField(study.polygons, { prepare: true });
 const finale = {
-    heights: field.heights,
+    heights: predictHeights(field.heights, field.width, field.height),
     edges: field.edges,
     segments: field.segments,
   },
@@ -139,10 +154,12 @@ for (const [name, mesh] of Object.entries(study.logo)) {
     const id = `${name}_${key}`;
     finale[id] =
       key === "indices"
-        ? (values.every((value) => value <= 65535)
-            ? Uint16Array
-            : Uint32Array
-          ).from(values)
+        ? predictIndices(
+            (values.every((value) => value <= 65535)
+              ? Uint16Array
+              : Uint32Array
+            ).from(values),
+          )
         : Float32Array.from(values.flat());
     logo[name][key] = id;
   }
