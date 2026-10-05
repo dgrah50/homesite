@@ -4,7 +4,7 @@ import {fissureCrater} from './fissure-crater.mjs';
 
 // Authored DG lighting. Evaluate from continuous local coordinates per pixel,
 // so changing the contour's triangulation never creates gradient stripes.
-export function fissureMaterials(polygons){
+export function fissureMaterials(polygons,preparedField=null){
   const uniforms={reveal:{value:1}};
   const vertexShader=`varying vec3 vLocal;
     void main(){vLocal=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`;
@@ -34,6 +34,6 @@ export function fissureMaterials(polygons){
     float hot=glow(p,vec2(4.8,13.));
     float halo=glow(p,vec2(10.,22.));
     vec3 color=vec3(1.,1.,.9)*hot*.92+vec3(.3,.34,.23)*halo*.18;`);
-  const crater=fissureCrater(polygons,uniforms);
+  const crater=fissureCrater(polygons,uniforms,preparedField);
   return {interior,floor,lip,surface,crater,update(t){uniforms.reveal.value=clamp((t-5.25)/.75);crater.update(t);}};
 }

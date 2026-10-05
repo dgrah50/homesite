@@ -8,7 +8,8 @@ center split. The portfolio loads behind it and appears through a 450 ms fade.
 
 - Homepage only, once per tab session. Hash links go straight to the page.
 - Skip intro and Escape dismiss immediately; keyboard focus returns to the page.
-- Sound is enabled by default and its assets preload with the intro. Autoplay
+- Sound is enabled by default; a prepared soundtrack downloads independently
+  of the renderer. Autoplay
   starts when the browser permits it; otherwise the control says "Tap for sound"
   and a tap resumes the soundtrack at the current animation time. The sound
   control can mute and re-enable it without restarting the animation.
@@ -35,6 +36,49 @@ Physical rendering is limited to 2.5 million pixels, with a 1.5× pixel ratio ca
 on narrow screens and 2× elsewhere. The WebGL runtime is imported only when the
 intro is actually shown; repeat visits do not fetch its geometry or audio.
 
+## Startup and parallel preparation
+
+The eligibility script conditionally preloads the opening animation tables and
+packed chamber meshes while JavaScript loads. Meshes use the exact Float32
+attributes already uploaded by Three.js and the original triangle indices. A
+130 KB gzip binary replaces the roughly 281 KB compressed JSON download; the
+source JSON remains available as a fallback for browsers without native gzip
+decompression. Packed assets and audio have content-hashed build URLs.
+
+Audio is synthesized once with the checked-in retail sequencer, then exported
+as 96 kbps Opus (84 KB), with a 128 kbps AAC fallback (135 KB). These are lossy
+encodings of the existing software reconstruction, not newly captured console
+audio. Browser decoding runs independently of scene preparation. The existing
+Web Audio buffer scheduling preserves sound unlocking, muting and resume offsets.
+The synthesizer and original data stay in the repository for reproducibility;
+neither is downloaded by the normal playback path.
+
+Normal playback creates only the opening scene before starting its clock. Then
+the finale module and a small worker load concurrently. The worker fetches and
+parses DG geometry, computes the unchanged crater height field, transfers its
+arrays, and terminates. The renderer warms the finale in a 1×1 offscreen target
+to upload textures and compile shaders before the visible handoff. Still-frame
+previews at or after 5.25 seconds wait for the finale before rendering.
+
+Skip, initialization failure and dismissal abort playback fetches and
+terminate the worker. If the finale cannot be prepared by 5.25 seconds, playback
+reveals the portfolio rather than showing an incomplete monogram. The full
+eight-second sequence plays when its assets are ready on time.
+
+To regenerate committed assets, use Node 24 and FFmpeg with libopus and AAC:
+
+```sh
+npm run generate:splash-audio
+npm run generate:splash-geometry
+```
+
+CI serves the committed exports without requiring FFmpeg. Tests verify their
+hashes against the synthesis sources and compare every packed vertex attribute
+and triangle index with the original JSON. In preview mode, the splash exposes
+`data-startup-ms` (time from navigation to first render), `data-setup-ms` (time
+from controller initialization), and `data-finale-ready-ms` on the canvas for
+local diagnostics; these measurements are not sent anywhere.
+
 ## Preview and checks
 
 Use Node 24, matching the GitHub Pages build.
@@ -53,11 +97,33 @@ The Pages workflow runs the splash tests and Astro type check before building.
 - `/?intro=preview&frame=5.88` checks the DG takeover without the green flash.
 
 Audio lifecycle tests cover blocked autoplay, buffer readiness, muting, pause
-and resume, and dismissal during loading. Framing tests cover portrait phones,
+and resume, and dismissal during loading. Worker tests cover delivery, asset
+failure and cancellation with queued replies. Framing tests cover portrait phones,
 a tablet, landscape phones, desktop and ultrawide displays. Live browser checks covered 390×844 and 844×390 rendering,
 the early chamber, the takeover, automatic dismissal, Skip, default-enabled sound, autoplay unlocking and mute behavior.
 Actual iOS Safari performance and browser chrome behavior still need a physical
 phone check before deployment.
+
+## Measured startup
+
+Controlled local tests used production builds on this Mac, a shared bandwidth
+limit per origin, 150 ms of added latency per asset request, gzip responses and
+`Cache-Control: no-store`. External Google Fonts were outside that throttle.
+The measurement ends after the first rendered frame; it excludes the subsequent
+eight-second playback. These are lab comparisons, not physical-phone or field
+measurements.
+
+| Connection | Previous implementation | Optimized implementation |
+| --- | ---: | ---: |
+| 5 Mbps | 2.37 s | 1.55 s |
+| 1 Mbps | 9.00 s | 5.59 s |
+
+At 1 Mbps the DG finale was ready 2.37 seconds into playback, before the 5.25-second
+deadline. Matching screenshots at 3 and 7 seconds were pixel-identical at
+1280×720. The extracted crater distances, heights and texture values also match
+the previous implementation byte for byte. Browser checks verified Opus decoding,
+AAC fallback after an intentionally failed Opus request, and fail-open behavior
+when the finale request was deliberately delayed by seven seconds.
 
 ## Source and attribution
 
