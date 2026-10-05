@@ -1,0 +1,133 @@
+<script is:inline>
+  (() => {
+    const query = new URLSearchParams(location.search);
+    const preview = query.get("intro") === "preview";
+    let seen = false;
+    try {
+      seen = sessionStorage.getItem("dg-intro-seen") === "1";
+    } catch {}
+    if (
+      location.pathname !== "/" ||
+      (!preview &&
+        (seen ||
+          location.hash ||
+          matchMedia("(prefers-reduced-motion: reduce)").matches))
+    )
+      return;
+    document.documentElement.classList.add("splash-pending");
+    const timer = setTimeout(() => {
+      document.documentElement.classList.remove("splash-pending");
+      document.dispatchEvent(new CustomEvent("dg:splash-timeout"));
+    }, 12000);
+    document.documentElement.dataset.splashWatchdog = String(timer);
+  })();
+</script>
+
+<section
+  id="dg-splash"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Dayan Graham startup animation"
+>
+  <canvas id="dg-splash-canvas" aria-hidden="true"></canvas>
+  <span id="dg-splash-domain" class="headline font-thin" aria-hidden="true"
+    ><span class="text-white font-bold">dayan</span>grah.am</span
+  >
+  <div class="splash-actions">
+    <button id="dg-splash-sound" type="button" aria-pressed="true">
+      Sound on
+    </button>
+    <button id="dg-splash-skip" type="button">
+      Skip intro <span aria-hidden="true">↗</span>
+    </button>
+  </div>
+</section>
+
+<script>
+  import { initSplash } from "../lib/splash/controller";
+  void initSplash();
+</script>
+
+<style>
+  #dg-splash {
+    display: none;
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    z-index: 1000;
+    background: #000;
+    opacity: 1;
+    transition: opacity 450ms ease;
+  }
+  :global(html.splash-pending) #dg-splash,
+  #dg-splash.is-leaving {
+    display: block;
+  }
+  #dg-splash.is-leaving {
+    opacity: 0;
+    pointer-events: none;
+  }
+  #dg-splash-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  #dg-splash-domain {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    transform: translateY(-50%);
+    font-size: clamp(16px, 1.8vw, 22px);
+    color: #ddd;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .splash-actions {
+    position: absolute;
+    left: max(24px, env(safe-area-inset-left));
+    right: max(24px, env(safe-area-inset-right));
+    bottom: max(24px, env(safe-area-inset-bottom));
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+  }
+  .splash-actions button {
+    min-height: 44px;
+    padding: 8px 0;
+    color: #a6b39c;
+    background: transparent;
+    border: 0;
+    font:
+      12px "CQ Mono",
+      monospace;
+    cursor: pointer;
+    transition: color 150ms;
+  }
+  .splash-actions button:hover {
+    color: #e8ece6;
+  }
+  .splash-actions button:focus-visible {
+    outline: 1px solid #a4ed51;
+    outline-offset: 6px;
+  }
+  .splash-actions button:disabled {
+    color: #71806a;
+  }
+  :global(html.splash-pending),
+  :global(html.splash-pending body) {
+    overflow: hidden !important;
+    background: #000;
+  }
+  :global(html.splash-pending .gridcontainer) {
+    visibility: hidden;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #dg-splash {
+      transition: none;
+    }
+  }
+</style>
