@@ -12,6 +12,8 @@ import openingUrl from "../assets/splash/opening.bin.gz?url";
       seen = sessionStorage.getItem("dg-intro-seen") === "1";
     } catch {}
     if (
+      typeof DecompressionStream !== "function" ||
+      typeof Worker !== "function" ||
       location.pathname !== "/" ||
       (!preview &&
         (seen ||
@@ -22,9 +24,7 @@ import openingUrl from "../assets/splash/opening.bin.gz?url";
     document.documentElement.classList.add("splash-pending");
     // These opening assets can download while the renderer module loads.
     // Visitors who bypass the intro never request them.
-    const meshes = typeof DecompressionStream === "function"
-      ? geometryUrl : "/splash/retail-geometry.json";
-    for (const url of ["/splash/retail.json", meshes, ...(typeof DecompressionStream === "function" ? [openingUrl] : [])]) {
+    for (const url of [geometryUrl, openingUrl]) {
       const preload = document.createElement("link");
       preload.rel = "preload";
       preload.as = "fetch";
@@ -71,7 +71,6 @@ import openingUrl from "../assets/splash/opening.bin.gz?url";
     position: fixed;
     inset: 0;
     width: 100%;
-    height: 100vh;
     height: 100dvh;
     z-index: 1000;
     background: #000;

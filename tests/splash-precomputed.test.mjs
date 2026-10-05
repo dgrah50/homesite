@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { gunzipSync } from "node:zlib";
 import { unpackPrepared } from "../src/lib/splash/prepared-pack.mjs";
@@ -21,7 +22,6 @@ import {
   sampleCamera,
   restoreCamera,
 } from "../src/lib/splash/simulation.mjs";
-import { fissureCrater } from "../src/lib/splash/fissure-crater.mjs";
 import { craterField } from "../src/lib/splash/crater-field.mjs";
 
 const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url));
@@ -53,6 +53,24 @@ test("prepared textures preserve every byte, face orientation and source sphere 
         [...opening.textures.plasma[i].subarray(k * 4, k * 4 + 4)],
         [0, 0, 0, plasma[i][k]],
       );
+  const retail = JSON.parse(read("public/splash/retail.json"));
+  for (const key of [
+    "quats",
+    "positions",
+    "posSequences",
+    "rotSequences",
+    "textAnimation",
+  ])
+    assert.deepEqual(opening.data[key], retail[key], key);
+  assert.deepEqual(
+    opening.data.primitives,
+    Object.fromEntries(
+      Object.entries(retail.primitives).map(([kind, { instances }]) => [
+        kind,
+        { instances },
+      ]),
+    ),
+  );
   assert.doesNotThrow(() => structuredClone(opening));
   const camera = restoreCamera(opening.camera);
   const sourceCamera = makeCamera(
@@ -96,22 +114,22 @@ test("prepared crater and DG meshes preserve all original GPU values without app
     "texels",
   ])
     assert.deepEqual(field[key], source[key], key);
-  const originalCrater = fissureCrater(study.polygons, {}, source);
-  assert.deepEqual(
-    field.geometry.positions,
-    originalCrater.mesh.geometry.attributes.position.array,
-  );
-  assert.deepEqual(
-    field.geometry.uv,
-    originalCrater.mesh.geometry.attributes.uv.array,
-  );
-  assert.deepEqual(
-    field.geometry.indices,
-    originalCrater.mesh.geometry.index.array,
-  );
-  originalCrater.mesh.geometry.dispose();
-  originalCrater.material.uniforms.bowlMap.value.dispose();
-  originalCrater.material.dispose();
+  // Captured from the original crater mesh before removing its runtime builder.
+  const expected = {
+    positions:
+      "49b93c595f78eebcdd27c853f1cc3a40f79566b0675d393e67e9c933b25e779c",
+    uv: "9157bf17027a4a4724717ac5f5ce674b482def67252ec08d40e44d14b166cfec",
+    indices: "d488a6e7df6d127c8dbf6a5be88d4e42d9b1d77891e8a840a4629a91eb62732b",
+  };
+  for (const [name, array] of Object.entries(field.geometry))
+    assert.equal(
+      createHash("sha256")
+        .update(
+          new Uint8Array(array.buffer, array.byteOffset, array.byteLength),
+        )
+        .digest("hex"),
+      expected[name],
+    );
   for (const [name, mesh] of Object.entries(study.logo))
     for (const [key, values] of Object.entries(mesh))
       assert.deepEqual(

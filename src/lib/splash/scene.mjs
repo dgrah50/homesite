@@ -1,52 +1,15 @@
 import * as THREE from 'three';
 import {sceneSample,mix,sourceSlerp} from './simulation.mjs';
 
-export function buildRevolvedGeometry(v) {
-  const tail=v.slice(-8),axis=new THREE.Vector3(...tail.slice(0,3)).normalize(),pivot=new THREE.Vector3(...tail.slice(3,6));
-  const segments=tail[6],count=tail[7];
-  const points=Array.from({length:count},(_,i)=>new THREE.Vector3(...v.slice(i*4,i*4+3)));
-  const segmentNormals=points.map((p,i)=>{
-    const next=points[(i+1)%count],tangent=new THREE.Vector3().crossVectors(axis,next.clone().sub(pivot));
-    return tangent.cross(next.clone().sub(p)).normalize();
-  });
-  const profile=[],profileNormals=[];
-  for(let i=0;i<count;i++) {
-    const incoming=segmentNormals[(i+count-1)%count],outgoing=segmentNormals[i];
-    if(v[i*4+3]&1) {
-      profile.push(points[i]);profileNormals.push(incoming.clone().add(outgoing).normalize());
-    } else {
-      profile.push(points[i],points[i]);profileNormals.push(incoming,outgoing);
-    }
-  }
-  const positions=[],normals=[],indices=[],stride=profile.length;
-  for(let s=0;s<=segments;s++) for(let i=0;i<stride;i++) {
-    const angle=2*Math.PI*s/segments;
-    const p=profile[i].clone().sub(pivot).applyAxisAngle(axis,angle).add(pivot);
-    const n=profileNormals[i].clone().applyAxisAngle(axis,angle);
-    positions.push(p.x,p.y,p.z);normals.push(n.x,n.y,n.z);
-  }
-  for(let s=0;s<segments;s++) for(let i=0;i<stride;i++) {
-    const next=(i+1)%stride,a=s*stride+i,b=a+stride,c=s*stride+next,d=c+stride;
-    // Source triangle strip: right, left, next-right, next-left.
-    // Reverse for WebGL front faces, retaining the source strip diagonal.
-    indices.push(a,b,d,a,d,c);
-  }
-  const g=new THREE.BufferGeometry();
-  g.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));
-  g.setAttribute('normal',new THREE.Float32BufferAttribute(normals,3));
-  g.setIndex(indices);return g;
-}
-
-export function buildScene(data,material,retailMeshes=null) {
+export function buildScene(data,material,retailMeshes) {
   const objects=new THREE.Group();
-  const metal=material ?? new THREE.MeshBasicMaterial({side:THREE.FrontSide});
   // These are inverse quaternions: the original uses row-vector LH rotations.
   const quat=q=>new THREE.Quaternion(-q[0],-q[1],-q[2],q[3]);
   const quats=data.quats.map(quat), animations=[];
   const geometryCache=new Map();
-  for(const [kind,{instances,versions}] of Object.entries(data.primitives)) for(const row of instances) {
+  for(const [kind,{instances}] of Object.entries(data.primitives)) for(const row of instances) {
     const sphere=kind==='Sphere',base=sphere?0:1;
-    const [tx,ty,tz,version,posAnim,rotAnim]=row.slice(base,base+6),v=versions[version];
+    const [tx,ty,tz,version,posAnim,rotAnim]=row.slice(base,base+6);
     const key=kind+':'+(kind==='Box'?0:version);let g=geometryCache.get(key);
     const makeRetail=bias=>{
       const asset=retailMeshes[key+':'+bias];
@@ -57,22 +20,13 @@ export function buildScene(data,material,retailMeshes=null) {
       geometry.setIndex(asset.indices);return geometry;
     };
     if(!g) {
-      if(retailMeshes)g=makeRetail(0);
-      else switch(kind) {
-        case 'Sphere':g=new THREE.SphereGeometry(1,v[0],Math.max(8,v[0]/2));break;
-        case 'Cylinder':g=new THREE.CylinderGeometry(1,1,1,v[1],v[0]).rotateX(Math.PI/2).translate(0,0,.5);break;
-        case 'Cone':g=new THREE.CylinderGeometry(v[1],v[0],v[2],v[4],v[3]).rotateX(Math.PI/2).translate(0,0,v[2]/2);break;
-        case 'Box':g=new THREE.BoxGeometry(1,1,1);break;
-        case 'Torus':g=new THREE.TorusGeometry(1,v[0],v[2],v[1]);break;
-        case 'SurfOfRev':g=buildRevolvedGeometry(v);break;
-      }
+      g=makeRetail(0);
       geometryCache.set(key,g);
     }
-    const mesh=new THREE.Mesh(g,typeof metal==='function'?metal(kind):metal);
-    if(retailMeshes){mesh.userData.geometryHi=g;const loKey=key+':lo';
-      if(!geometryCache.has(loKey))geometryCache.set(loKey,makeRetail(1));
-      mesh.userData.geometryLo=geometryCache.get(loKey);
-    }
+    const mesh=new THREE.Mesh(g,material(kind));
+    mesh.userData.geometryHi=g;const loKey=key+':lo';
+    if(!geometryCache.has(loKey))geometryCache.set(loKey,makeRetail(1));
+    mesh.userData.geometryLo=geometryCache.get(loKey);
     const translation=new THREE.Vector3(tx*.004131-27.844984,ty*.008252-.228729,tz*.004421+.497086);
     const rotation=sphere?new THREE.Quaternion():quats[row[0]].clone();
     const size=row.slice(base+6);
@@ -85,7 +39,7 @@ export function buildScene(data,material,retailMeshes=null) {
   }
 
   function advance(t) {
-    if(retailMeshes)for(const mesh of objects.children)mesh.geometry=t>=5.2?mesh.userData.geometryLo:mesh.userData.geometryHi;
+    for(const mesh of objects.children)mesh.geometry=t>=5.2?mesh.userData.geometryLo:mesh.userData.geometryHi;
     const {index,fraction:s}=sceneSample(t);
     for(const a of animations) {
       const q=a.rotAnim<0?new THREE.Quaternion():quat(sourceSlerp(data.quats[data.rotSequences[a.rotAnim][index]],data.quats[data.rotSequences[a.rotAnim][index+1]],s));

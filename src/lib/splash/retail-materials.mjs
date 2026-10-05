@@ -2,10 +2,9 @@ import * as THREE from 'three';
 import {QRand,norm} from './simulation.mjs';
 
 // Original CreateNormalizationCubeMap: 8-bit RGB, linear filtering, no mipmaps.
-export function normalizationCube(size,prepared=null){
+export function normalizationCube(size){
   const faces=[];
   for(let face=0;face<6;face++){
-    if(prepared){const t=new THREE.DataTexture(prepared[face],size,size);t.flipY=false;faces.push(t);continue;}
     const pixels=new Uint8Array(size*size*4);
     for(let y=0;y<size;y++)for(let x=0;x<size;x++){
       const w=x/(size-1)*2-1,h=y/(size-1)*2-1;
@@ -52,8 +51,7 @@ export function intensityTextures(size,num,noise,seed,plasma=false){
   return arrays;
 }
 
-export function roughNormalTexture(prepared=null){
-  if(prepared)return texture(prepared,128,true);
+export function roughNormalTexture(){
   const size=128,a=intensityTextures(size,1,512,0)[0],pixels=new Uint8Array(size*size*4);
   for(let y=0;y<size;y++)for(let x=0;x<size;x++){
     const i=y*size+x,h=a[i]/512,hx=(a[i+1]??0)/512,hy=(a[i+size]??0)/512;
@@ -66,8 +64,7 @@ export function roughNormalTexture(prepared=null){
   return texture(pixels,size,true);
 }
 
-export function glowTexture(prepared=null){
-  if(prepared)return texture(prepared,256);
+export function glowTexture(){
   const size=256,pixels=new Uint8Array(size*size*4);
   for(let y=0;y<size;y++)for(let x=0;x<size;x++){
     const d=Math.max(0,16777216-((x-127)*32)**2-((y-127)*32)**2);

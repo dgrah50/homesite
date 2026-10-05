@@ -111,7 +111,18 @@ const retail = JSON.parse(
   readFileSync(new URL("../public/splash/retail.json", import.meta.url)),
 );
 const { transform, ...camera } = makeCamera(retail.cameraPaths[0]);
-write("opening", { textures, camera }, arrays);
+const data = Object.fromEntries(
+  ["quats", "positions", "posSequences", "rotSequences", "textAnimation"].map(
+    (key) => [key, retail[key]],
+  ),
+);
+data.primitives = Object.fromEntries(
+  Object.entries(retail.primitives).map(([kind, { instances }]) => [
+    kind,
+    { instances },
+  ]),
+);
+write("opening", { textures, camera, data }, arrays);
 const study = JSON.parse(
   readFileSync(new URL("../public/splash/dg.json", import.meta.url)),
 );
