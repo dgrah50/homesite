@@ -1,4 +1,6 @@
 import { prepareOpening } from "./opening.mjs";
+import geometryUrl from "../../assets/splash/retail-geometry.bin.gz?url";
+import openingUrl from "../../assets/splash/opening.bin.gz?url";
 import { createSplashAudio } from "./audio";
 import type { createSplash } from "./runtime.js";
 
@@ -43,7 +45,7 @@ function splashElements() {
     : undefined;
 }
 
-export async function initSplash() {
+async function initSplash(replay: boolean, onComplete: () => void) {
   const html = document.documentElement;
   if (!html.classList.contains("splash-pending")) return;
 
@@ -51,6 +53,7 @@ export async function initSplash() {
   if (!elements) {
     clearWatchdog();
     html.classList.remove("splash-pending");
+    onComplete();
     return;
   }
   const { root, canvas, domain, skip, sound, page } = elements;
@@ -61,7 +64,7 @@ export async function initSplash() {
   const previousFocus = document.activeElement;
   const wasInert = page.inert;
   const query = new URLSearchParams(location.search);
-  const preview = query.get("intro") === "preview";
+  const preview = !replay && query.get("intro") === "preview";
   const frame = query.has("frame") ? Number(query.get("frame")) : NaN;
   const still = preview && Number.isFinite(frame);
   let engine: Awaited<ReturnType<typeof createSplash>> | undefined;
@@ -89,6 +92,7 @@ export async function initSplash() {
     root.removeEventListener("transitionend", fadeEnded);
     engine?.dispose();
     root.remove();
+    onComplete();
   }
 
   function fadeEnded(event: TransitionEvent) {
@@ -183,7 +187,7 @@ export async function initSplash() {
   matchMedia("(prefers-reduced-motion: reduce)").addEventListener(
     "change",
     (event) => {
-      if (event.matches && !preview) finish();
+      if (event.matches && !preview && !replay) finish();
     },
     { signal },
   );
@@ -226,4 +230,56 @@ export async function initSplash() {
   } catch {
     finish();
   }
+}
+
+/** Mount a fresh player per run; retain only its inert markup between runs. */
+export function setupSplash() {
+  const template = document.querySelector<HTMLTemplateElement>(
+    "#dg-splash-template",
+  );
+  const replay = document.querySelector<HTMLButtonElement>("#dg-splash-replay");
+  if (
+    !template ||
+    !replay ||
+    typeof DecompressionStream !== "function" ||
+    typeof Worker !== "function"
+  )
+    return;
+
+  let playing = false;
+  const play = (manual: boolean) => {
+    if (playing) return;
+    playing = true;
+    template.after(template.content.cloneNode(true));
+    if (manual) {
+      // A visitor may have bypassed the automatic boot. Start both opening
+      // downloads before importing the renderer, just as the early script does.
+      for (const url of [geometryUrl, openingUrl]) {
+        if (document.head.querySelector(`link[rel="preload"][href="${url}"]`))
+          continue;
+        const preload = document.createElement("link");
+        preload.rel = "preload";
+        preload.as = "fetch";
+        preload.crossOrigin = "anonymous";
+        preload.href = url;
+        document.head.append(preload);
+      }
+      const html = document.documentElement;
+      html.classList.add("splash-pending");
+      html.dataset.splashWatchdog = String(
+        window.setTimeout(() => {
+          html.classList.remove("splash-pending");
+          document.dispatchEvent(new CustomEvent("dg:splash-timeout"));
+        }, 12000),
+      );
+    }
+    // Called synchronously from the click so audio.resume retains the gesture.
+    void initSplash(manual, () => {
+      playing = false;
+    });
+  };
+  replay.hidden = false;
+  replay.addEventListener("click", () => play(true));
+  if (document.documentElement.classList.contains("splash-pending"))
+    play(false);
 }

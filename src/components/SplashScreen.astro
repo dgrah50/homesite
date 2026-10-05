@@ -40,29 +40,31 @@ import openingUrl from "../assets/splash/opening.bin.gz?url";
   })();
 </script>
 
-<section
-  id="dg-splash"
-  role="dialog"
-  aria-modal="true"
-  aria-label="Dayan Graham startup animation"
->
-  <canvas id="dg-splash-canvas" aria-hidden="true"></canvas>
-  <span id="dg-splash-domain" class="headline font-thin" aria-hidden="true"
-    ><span class="text-white font-bold">dayan</span>grah.am</span
+<template id="dg-splash-template">
+  <section
+    id="dg-splash"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Dayan Graham startup animation"
   >
-  <div class="splash-actions">
-    <button id="dg-splash-sound" type="button" aria-pressed="true">
-      Sound on
-    </button>
-    <button id="dg-splash-skip" type="button">
-      Skip intro <span aria-hidden="true">↗</span>
-    </button>
-  </div>
-</section>
+    <canvas id="dg-splash-canvas" aria-hidden="true"></canvas>
+    <span id="dg-splash-domain" class="headline font-thin" aria-hidden="true"
+      ><span class="text-white font-bold">dayan</span>grah.am</span
+    >
+    <div class="splash-actions">
+      <button id="dg-splash-sound" type="button" aria-pressed="true">
+        Sound on
+      </button>
+      <button id="dg-splash-skip" type="button">
+        Skip intro <span aria-hidden="true">↗</span>
+      </button>
+    </div>
+  </section>
+</template>
 
 <script>
-  import { initSplash } from "../lib/splash/controller";
-  void initSplash();
+  import { setupSplash } from "../lib/splash/controller";
+  setupSplash();
 </script>
 
 <style>
