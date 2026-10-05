@@ -41,7 +41,7 @@ intro is actually shown; repeat visits do not fetch its geometry or audio.
 The eligibility script conditionally preloads the opening packet and packed
 chamber meshes while JavaScript loads. Meshes use the exact Float32
 attributes already uploaded by Three.js and the original triangle indices. A
-130 KB gzip binary replaces the roughly 281 KB compressed JSON download.
+96 KB gzip binary replaces the roughly 281 KB compressed JSON download.
 All original JSON remains as build input, with no runtime JSON loading. The
 opening packet includes only the animation tables used by playback. Packed
 assets and audio have content-hashed build URLs.
@@ -54,16 +54,20 @@ The synthesizer and original data stay in the repository for reproducibility;
 neither is downloaded by the normal playback path.
 
 The build generates the fixed normalization cubes, rough normal map, glow,
-plasma textures, unit spheres and prepared camera path in `opening.bin.gz` (144 KB). Reflected texture
-planes are shared and integer predictors reduce download weight without losing
+plasma textures, unit spheres and prepared camera path in `opening.bin.gz` (118 KB). Reflected texture
+planes are shared; the build chooses the smallest lossless byte predictor per plane.
+Integer index differences and shared arrays further reduce download weight without losing
 any pixel values. The main sphere retains Float64 unit vectors so its original
 deformation remains unchanged. A worker expands these assets while the renderer
 module downloads and the browser decodes audio. The document consumes its own
 preload and transfers the result to the worker, avoiding a duplicate worker fetch.
 
-The build also generates `finale.bin.gz` (274 KB): packed DG meshes, smoothed
+The build also generates `finale.bin.gz` (157 KB): packed DG meshes, smoothed
 heights, and each field pixel's nearest-edge lookup and inside/outside flag.
-The worker restores exact Float32 distances and derivatives in a linear pass;
+Mirrored crater heights share their exact Float32 bits; asymmetric pixels keep
+their complete XOR residual. Byte planes improve gzip compression, with no
+quantization. Duplicate mesh arrays share packet storage and indices use reversible
+integer differences. The worker restores exact Float32 distances and derivatives in a linear pass;
 it no longer searches contours or performs Gaussian smoothing. It also expands
 the regular crater mesh outside the rendering thread. Storing redundant full
 RGBA fields and mesh grids would make downloads much larger, so the worker
@@ -135,6 +139,50 @@ Actual iOS Safari performance and browser chrome behavior have not been measured
 on a physical phone.
 
 ## Measured startup
+
+### Transfer budgets
+
+The production build audits the complete splash dependency graph, including
+dynamic imports, shared modules and worker URLs, counting each script once.
+JavaScript is measured with gzip level 9; binary assets and Opus are counted at
+their actual stored size. These are splash payload estimates, excluding the
+underlying homepage, CSS, fonts and HTTP overhead.
+
+| Payload | Before size audit (PR #24) | Compact lossless packets | Enforced ceiling |
+| --- | ---: | ---: | ---: |
+| Opening visuals and animation tables | 143,960 B | 118,083 B | 120,000 B |
+| Chamber meshes | 130,278 B | 96,488 B | 100,000 B |
+| DG finale | 273,530 B | 157,139 B | 160,000 B |
+| Opus audio | 84,205 B | 84,205 B | 85,000 B |
+| Bundled splash JavaScript | 137,301 B | 137,578 B | 145,000 B |
+| **Total** | **769,274 B** | **593,493 B** | **610,000 B** |
+
+This removes 175,781 bytes (22.9%) without changing any reconstructed texture,
+height, mesh or camera value. Compared with the older runtime-generation version
+(PR #22, about 527 KB), precomputation still adds about 67 KB. That bounded cost
+keeps expensive generation off the visitor's device. We do not store complete
+expanded textures, per-frame animation or redundant full RGBA terrain fields.
+
+`npm run build` and the Pages workflow fail if any ceiling is exceeded.
+Use `npm run check:splash-size` to inspect an existing build. Changes to a budget
+should include measured justification rather than silently raising the limit.
+
+Fresh no-cache lab samples on this Mac used the same shared per-origin bandwidth
+limit and 150 ms asset latency for both builds, rendering the chamber at three
+seconds. External fonts were outside the throttle:
+
+| Connection | PR #24 first frame | Compact packets first frame |
+| --- | ---: | ---: |
+| 5 Mbps | 1.51 s | 1.35 s |
+| 1 Mbps | 5.59 s | 5.06 s |
+
+At 1 Mbps, the finale finished preparation 1.64 seconds after the first frame,
+versus 2.69 seconds previously. These are single controlled samples, not field
+averages or physical-phone measurements. Chamber and DG screenshots at 3 and 7
+seconds are pixel-identical at 1280×720. All 19 tests pass, including complete
+source-data comparisons and size-guard coverage.
+
+### Earlier measurements
 
 Controlled local tests used production builds on this Mac, a shared bandwidth
 limit per origin, 150 ms of added latency per asset request, gzip responses and
