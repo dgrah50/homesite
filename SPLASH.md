@@ -7,6 +7,15 @@ center split. The portfolio loads behind it and appears through a 450 ms fade.
 ## Visitor behavior
 
 - Homepage only, once per tab session. Hash links go straight to the page.
+- The homepage footer has a quiet "replay intro ↻" button. It mounts a fresh
+  player without navigating, keeps the visitor's scroll position and returns
+  focus to the button after playback or Skip. Sound starts from the click gesture.
+  Opening downloads still overlap renderer loading if the visitor skipped the
+  initial boot. The same assets and disposal path serve every replay; there is
+  no persistent hidden renderer or extra media asset.
+- Explicit replay plays the full boot even when a still-frame preview URL or
+  reduced-motion preference bypasses automatic playback. The replay control is
+  hidden without JavaScript or the required worker/decompression APIs.
 - Skip intro and Escape dismiss immediately; keyboard focus returns to the page.
 - Sound is enabled by default; a prepared soundtrack downloads independently
   of the renderer. Autoplay
@@ -137,6 +146,12 @@ a tablet, landscape phones, desktop and ultrawide displays. Live browser checks 
 the early chamber, the takeover, automatic dismissal, Skip, default-enabled sound, autoplay unlocking and mute behavior.
 Actual iOS Safari performance and browser chrome behavior have not been measured
 on a physical phone.
+
+Replay checks covered completion, repeated activation, Escape and Skip, sound
+starting from the click, unchanged URLs, focus/scroll restoration, and the footer
+at phone and tablet widths. The addition changes only a small amount of bundled
+JavaScript (about 284 compressed bytes); all media assets are unchanged and the
+complete splash remains about 594 KB, below its 610 KB transfer ceiling.
 
 ## Measured startup
 

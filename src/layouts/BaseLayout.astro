@@ -78,7 +78,8 @@ const displayTitle = ogTitle || title;
         <slot />
       </main>
       <footer class="footer text-center text-xs text-text-body font-mono">
-        <span id="year"></span> dayangrah.am
+        <span><span id="year"></span> dayangrah.am</span>
+        <slot name="footer-actions" />
       </footer>
     </div>
 
@@ -159,6 +160,11 @@ const displayTitle = ogTitle || title;
   .footer {
     grid-area: footer;
     padding: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    column-gap: 20px;
   }
 
   .header {

@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "./BaseLayout.astro";
 import SplashScreen from "../components/SplashScreen.astro";
+import ReplayIntro from "../components/ReplayIntro.astro";
 
 interface Props {
   title: string;
@@ -13,5 +14,6 @@ const { title, description, ogTitle } = Astro.props;
 
 <BaseLayout title={title} description={description} ogTitle={ogTitle}>
   <SplashScreen slot="intro" />
+  <ReplayIntro slot="footer-actions" />
   <slot />
 </BaseLayout>

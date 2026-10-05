@@ -1,0 +1,31 @@
+<button id="dg-splash-replay" class="replay-intro" type="button" hidden>
+  replay intro <span aria-hidden="true">↻</span>
+</button>
+
+<style>
+  .replay-intro {
+    min-height: 44px;
+    padding: 8px 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    transition: color 150ms ease;
+    text-underline-offset: 4px;
+  }
+  .replay-intro:hover {
+    color: #a4ed51;
+    text-decoration: underline;
+  }
+  .replay-intro:focus-visible {
+    color: #a4ed51;
+    outline: 1px solid currentColor;
+    outline-offset: 4px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .replay-intro {
+      transition: none;
+    }
+  }
+</style>
