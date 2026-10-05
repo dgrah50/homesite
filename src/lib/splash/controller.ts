@@ -53,6 +53,7 @@ export async function initSplash() {
     return;
   }
   const { root, canvas, domain, skip, sound, page } = elements;
+  const startupStarted = performance.now();
 
   const lifetime = new AbortController();
   const { signal } = lifetime;
@@ -114,6 +115,10 @@ export async function initSplash() {
     if (previousTick !== undefined)
       time = Math.min(BOOT_SECONDS, time + (now - previousTick) / 1000);
     previousTick = now;
+    if (!engine?.canRender(time)) {
+      finish();
+      return;
+    }
     try {
       engine?.render(time);
     } catch {
@@ -126,6 +131,7 @@ export async function initSplash() {
 
   function resume() {
     if (!ready || finished || document.hidden) return;
+    previousTick = performance.now();
     audio.play();
     if (!still) raf = requestAnimationFrame(tick);
   }
@@ -191,6 +197,9 @@ export async function initSplash() {
       return;
     }
     time = still ? Math.max(0, Math.min(BOOT_SECONDS, frame)) : 0;
+    // Still-frame previews need the finale immediately. Normal playback starts
+    // with Flubber while the worker prepares DG in the background.
+    if (still && !engine.canRender(time)) await engine.prepareFinale();
     await audio.ready();
     if (finished) {
       engine.dispose();
@@ -199,8 +208,17 @@ export async function initSplash() {
     engine.render(time);
     root.dataset.ready = "true";
     ready = true;
+    if (preview) {
+      root.dataset.startupMs = String(Math.round(performance.now()));
+      root.dataset.setupMs = String(
+        Math.round(performance.now() - startupStarted),
+      );
+    }
     clearWatchdog();
     resume();
+    void engine.prepareFinale().catch(() => {
+      if (!finished) finish();
+    });
   } catch {
     finish();
   }

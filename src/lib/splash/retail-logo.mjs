@@ -9,7 +9,7 @@ function fixedTextureMaterial(type){
       ${type==='lip'?'color=mix(vec3(0.,1./255.,0.),vec3(75./255.,155./255.,75./255.),clamp(vUV.y,0.,1.));':type==='top'?'color=vec3(vUV.y);':'vec2 p=vUV*2.-1.;float d=length(p);float c=cos(d);for(int i=0;i<6;i++)c*=c;color=vec3(d<1.?.5*c+.5*(1.-d):0.);'}
       }gl_FragColor=vec4(color,1.);}`});
 }
-export function retailLogo(data,{custom=null,style='retail',contours=null}={}){
+export function retailLogo(data,{custom=null,style='retail',contours=null,preparedField=null}={}){
   const scene=new THREE.Scene(),group=new THREE.Group();scene.add(group);
   const uniforms={first0:{value:new THREE.Vector3()},first1:{value:new THREE.Vector3()},second0:{value:new THREE.Vector3()},second1:{value:new THREE.Vector3()},weight:{value:0}};
   // Decompiled from the retail g_slash_interior_xvu: gradients in v1.y,
@@ -18,7 +18,7 @@ export function retailLogo(data,{custom=null,style='retail',contours=null}={}){
     vertexShader:`uniform vec3 first0,first1,second0,second1;uniform float weight;varying vec3 vColor;
       void main(){vec3 r4=mix(first1,first0,uv.y),r7=mix(second1,second0,uv.y);vColor=mix(r7,r4,weight);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
     fragmentShader:'varying vec3 vColor;void main(){gl_FragColor=vec4(clamp(vColor,0.,1.),1.);}'});
-  const fissure=style==='fissure'?fissureMaterials(contours):null;
+  const fissure=style==='fissure'?fissureMaterials(contours,preparedField):null;
   const materials=[interior],trademarks=[],revealMeshes=[];
   const tmPixels=new Uint8Array(16*16*4);
   data.trademarkPixels.forEach((p,i)=>{tmPixels.set([(p>>>16)&255,(p>>>8)&255,p&255,p>>>24],i*4);});

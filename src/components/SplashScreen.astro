@@ -1,4 +1,8 @@
-<script is:inline>
+---
+import geometryUrl from "../assets/splash/retail-geometry.bin.gz?url";
+---
+
+<script is:inline define:vars={{ geometryUrl }}>
   (() => {
     const query = new URLSearchParams(location.search);
     const preview = query.get("intro") === "preview";
@@ -15,6 +19,18 @@
     )
       return;
     document.documentElement.classList.add("splash-pending");
+    // These opening assets can download while the renderer module loads.
+    // Visitors who bypass the intro never request them.
+    const meshes = typeof DecompressionStream === "function"
+      ? geometryUrl : "/splash/retail-geometry.json";
+    for (const url of ["/splash/retail.json", meshes]) {
+      const preload = document.createElement("link");
+      preload.rel = "preload";
+      preload.as = "fetch";
+      preload.crossOrigin = "anonymous";
+      preload.href = url;
+      document.head.append(preload);
+    }
     const timer = setTimeout(() => {
       document.documentElement.classList.remove("splash-pending");
       document.dispatchEvent(new CustomEvent("dg:splash-timeout"));

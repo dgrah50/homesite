@@ -4,8 +4,8 @@ type LoadBuffer = (
 ) => Promise<AudioBuffer>;
 
 const loadBuffer: LoadBuffer = async (context, signal) => {
-  const { enableSplashAudio } = await import("./runtime.js");
-  return enableSplashAudio(context, signal);
+  const { loadPreparedAudio } = await import("./prepared-audio");
+  return loadPreparedAudio(context, signal);
 };
 
 /** Audio preference, autoplay unlocking and playback share one lifecycle. */

@@ -2,7 +2,6 @@ import * as THREE from "three";
 import { buildScene } from "./scene.mjs";
 import { retailFog } from "./retail-fog.mjs";
 import { retailShadows } from "./retail-shadows.mjs";
-import { retailLogo } from "./retail-logo.mjs";
 import { chamberVisibility } from "./scenery.mjs";
 import {
   normalizationCube,
@@ -22,6 +21,8 @@ import {
 } from "./simulation.mjs";
 import { logoRenderState } from "./fissure-transition.mjs";
 import { splashFraming } from "./framing.mjs";
+import { prepareFinale } from "./finale.mjs";
+import { loadGeometry } from "./geometry.mjs";
 
 export async function createSplash(canvas, domain, { signal } = {}) {
   const load = async (name) => {
@@ -29,9 +30,10 @@ export async function createSplash(canvas, domain, { signal } = {}) {
     if (!response.ok) throw new Error(`Splash asset ${name} failed to load.`);
     return response.json();
   };
-  const [data, meshes, study] = await Promise.all(
-    ["retail", "retail-geometry", "dg"].map(load),
-  );
+  const [data, meshes] = await Promise.all([
+    load("retail"),
+    loadGeometry(signal),
+  ]);
   signal?.throwIfAborted();
   const renderer = new THREE.WebGLRenderer({
     canvas,
@@ -105,23 +107,11 @@ export async function createSplash(canvas, domain, { signal } = {}) {
     );
     halo.renderOrder = 1;
     scene.add(halo);
-    const logo = retailLogo(data, {
-      custom: study.logo,
-      style: "fissure",
-      contours: study.polygons,
-    });
-    logo.setLighting("soft");
-    logo.setCenter("soft-split");
     const path = makeCamera(data.cameraPaths[0]);
-    logo.group.matrix.makeBasis(
-      new THREE.Vector3(...path.x),
-      new THREE.Vector3(...path.y),
-      new THREE.Vector3(...path.z),
-    );
-    logo.group.matrix.setPosition(
-      new THREE.Vector3(...path.transform([0, -path.offset, 0])),
-    );
-    logo.group.matrixAutoUpdate = false;
+    const emptyFinale = new THREE.Scene();
+    let logo,
+      finaleLoading,
+      finaleReady = false;
     const fog = retailFog(renderer, scene, camera, objects, simulation, {
       highQuality: true,
     });
@@ -130,6 +120,47 @@ export async function createSplash(canvas, domain, { signal } = {}) {
       disposed = false,
       width = 0,
       height = 0;
+
+    // Start after the opening frame. The worker also parses the finale JSON;
+    // transferring its buffers avoids copying the calculated height field.
+    function prepare() {
+      return (finaleLoading ||= Promise.all([
+        prepareFinale(signal),
+        import("./retail-logo.mjs"),
+      ]).then(([{ study, field }, { retailLogo }]) => {
+        if (disposed) return;
+        logo = retailLogo(data, {
+          custom: study.logo,
+          style: "fissure",
+          contours: study.polygons,
+          preparedField: field,
+        });
+        logo.setLighting("soft");
+        logo.setCenter("soft-split");
+        logo.group.matrix.makeBasis(
+          new THREE.Vector3(...path.x),
+          new THREE.Vector3(...path.y),
+          new THREE.Vector3(...path.z),
+        );
+        logo.group.matrix.setPosition(
+          new THREE.Vector3(...path.transform([0, -path.offset, 0])),
+        );
+        logo.group.matrixAutoUpdate = false;
+        // Upload buffers and the texture into a tiny offscreen target now,
+        // rather than paying that cost on the first visible DG frame.
+        const target = new THREE.WebGLRenderTarget(1, 1);
+        try {
+          renderer.setRenderTarget(target);
+          renderer.render(logo.scene, camera);
+        } finally {
+          renderer.setRenderTarget(null);
+          target.dispose();
+        }
+        finaleReady = true;
+        canvas.dataset.finaleReady = "true";
+        canvas.dataset.finaleReadyMs = String(Math.round(performance.now()));
+      }));
+    }
 
     function render(t) {
       if (disposed) return;
@@ -189,9 +220,9 @@ export async function createSplash(canvas, domain, { signal } = {}) {
       halo.scale.setScalar(simulation.radius * 10.4);
       halo.material.opacity =
         Math.trunc(clamp(simulation.intensity) * 255) / 255;
-      logo.update(t, c);
+      logo?.update(t, c);
       if (c.renderScene && simulation.intensity > 0) shadows.update();
-      fog.render(t, c, logo.scene);
+      fog.render(t, c, logo?.scene || emptyFinale);
       canvas.dataset.time = t.toFixed(2);
     }
     const observer = new ResizeObserver(() => render(time));
@@ -203,7 +234,7 @@ export async function createSplash(canvas, domain, { signal } = {}) {
       const geometries = new Set(),
         materials = new Set(),
         textures = new Set([...cubes, rough]);
-      for (const root of [scene, logo.scene])
+      for (const root of [scene, logo?.scene].filter(Boolean))
         root.traverse((node) => {
           if (node.geometry) geometries.add(node.geometry);
           if (node.userData.geometryHi)
@@ -229,25 +260,15 @@ export async function createSplash(canvas, domain, { signal } = {}) {
       renderer.dispose();
       renderer.forceContextLoss();
     }
-    return { render, dispose };
+    return {
+      render,
+      dispose,
+      prepareFinale: prepare,
+      canRender: (t) => t < 5.25 || finaleReady,
+    };
   } catch (error) {
     renderer.dispose();
     renderer.forceContextLoss();
     throw error;
   }
-}
-
-// Audio code and tables load with an active intro; repeat visits skip them.
-export async function enableSplashAudio(context, signal) {
-  const [{ renderAudio }, response] = await Promise.all([
-    import("./audio-engine.mjs"),
-    fetch("/splash/retail-audio.json", { signal }),
-  ]);
-  if (!response.ok) throw new Error("Splash audio failed to load.");
-  const audio = renderAudio(await response.json());
-  signal.throwIfAborted();
-  const buffer = context.createBuffer(2, audio.left.length, audio.sampleRate);
-  buffer.copyToChannel(audio.left, 0);
-  buffer.copyToChannel(audio.right, 1);
-  return buffer;
 }
