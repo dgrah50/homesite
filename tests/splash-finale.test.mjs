@@ -1,42 +1,39 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { prepareVisuals, prepareFinale } from "../src/lib/splash/finale.mjs";
+import { prepareVisuals } from "../src/lib/splash/prepared.mjs";
 
-function setup(t) {
-  const previous = globalThis.location;
-  globalThis.location = { href: "https://dayangrah.am/" };
-  t.after(() => {
-    if (previous === undefined) delete globalThis.location;
-    else globalThis.location = previous;
-  });
+function setup() {
   const controller = new AbortController();
   const worker = {
     terminations: 0,
-    postMessage(url) {
-      this.url = url;
+    postMessage(message) {
+      this.message = message;
     },
     terminate() {
       this.terminations++;
     },
   };
-  const ready = prepareFinale(controller.signal, () => worker);
-  return { controller, worker, ready };
+  const buffer = new ArrayBuffer(16);
+  const ready = prepareVisuals(
+    controller.signal,
+    { kind: "finale", url: "/finale.bin.gz" },
+    { createWorker: () => worker, loadBuffer: async () => buffer },
+  );
+  return { controller, worker, ready, buffer };
 }
 
-test("worker returns prepared geometry and terminates after delivery", async (t) => {
-  const { worker, ready } = setup(t);
-  assert.deepEqual(worker.url, {
-    kind: "finale",
-    url: "https://dayangrah.am/splash/dg.json",
-  });
+test("worker returns prepared geometry and terminates after delivery", async () => {
+  const { worker, ready, buffer } = setup();
+  await new Promise((resolve) => setImmediate(resolve));
+  assert.deepEqual(worker.message, { kind: "finale", buffer });
   const result = { study: {}, field: {} };
   worker.onmessage({ data: result });
   assert.equal(await ready, result);
   assert.equal(worker.terminations, 1);
 });
 
-test("skipping during preparation terminates the worker and ignores queued replies", async (t) => {
-  const { worker, ready, controller } = setup(t);
+test("skipping during preparation terminates the worker and ignores queued replies", async () => {
+  const { worker, ready, controller } = setup();
   const lateReply = worker.onmessage;
   controller.abort();
   await assert.rejects(ready, { name: "AbortError" });
@@ -45,8 +42,8 @@ test("skipping during preparation terminates the worker and ignores queued repli
   assert.equal(worker.onmessage, null);
 });
 
-test("asset and worker failures reject instead of leaving playback waiting", async (t) => {
-  const { worker, ready } = setup(t);
+test("asset and worker failures reject instead of leaving playback waiting", async () => {
+  const { worker, ready } = setup();
   worker.onmessage({ data: { error: "Asset unavailable" } });
   await assert.rejects(ready, /Asset unavailable/);
   assert.equal(worker.terminations, 1);
@@ -70,8 +67,7 @@ test("opening consumes the document download and transfers it without a worker r
   const ready = prepareVisuals(
     controller.signal,
     { kind: "opening", url: "/opening.bin.gz" },
-    () => worker,
-    async () => buffer,
+    { createWorker: () => worker, loadBuffer: async () => buffer },
   );
   await new Promise((resolve) => setImmediate(resolve));
   assert.equal(sends, 1);
@@ -96,11 +92,13 @@ test("abort during a document download prevents its late transfer and terminates
   const ready = prepareVisuals(
     controller.signal,
     { kind: "opening", url: "/opening.bin.gz" },
-    () => worker,
-    () =>
-      new Promise((resolve) => {
-        deliver = resolve;
-      }),
+    {
+      createWorker: () => worker,
+      loadBuffer: () =>
+        new Promise((resolve) => {
+          deliver = resolve;
+        }),
+    },
   );
   await new Promise((resolve) => setImmediate(resolve));
   controller.abort();

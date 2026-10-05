@@ -7,10 +7,6 @@
     "boot.ogg": {
       "bytes": 84205,
       "sha256": "d1f227c75deba62580164b256a4446e5e8b6550b15cde969f80e58ff15d29868"
-    },
-    "boot.m4a": {
-      "bytes": 134831,
-      "sha256": "2fb8d032358fca9db8ecb919ed4d2960f007f0e8bc502c03d71bf40a5fdb3991"
     }
   }
 }

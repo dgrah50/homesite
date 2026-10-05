@@ -22,7 +22,7 @@ center split. The portfolio loads behind it and appears through a 450 ms fade.
 
 ## Full-screen framing
 
-The canvas uses a fixed `100dvh` overlay, with `100vh` as a fallback. The viewport
+The canvas uses a fixed `100dvh` overlay. The viewport
 allows safe-area coverage and the controls stay within safe-area insets.
 
 `src/lib/splash/framing.mjs` preserves the original horizontal camera view on
@@ -38,23 +38,23 @@ intro is actually shown; repeat visits do not fetch its geometry or audio.
 
 ## Startup and parallel preparation
 
-The eligibility script conditionally preloads the opening animation tables and
-packed chamber meshes and prepared textures while JavaScript loads. Meshes use the exact Float32
+The eligibility script conditionally preloads the opening packet and packed
+chamber meshes while JavaScript loads. Meshes use the exact Float32
 attributes already uploaded by Three.js and the original triangle indices. A
-130 KB gzip binary replaces the roughly 281 KB compressed JSON download; the
-source JSON remains available as a fallback for browsers without native gzip
-decompression. Packed assets and audio have content-hashed build URLs.
+130 KB gzip binary replaces the roughly 281 KB compressed JSON download.
+All original JSON remains as build input, with no runtime JSON loading. The
+opening packet includes only the animation tables used by playback. Packed
+assets and audio have content-hashed build URLs.
 
 Audio is synthesized once with the checked-in retail sequencer, then exported
-as 96 kbps Opus (84 KB), with a 128 kbps AAC fallback (135 KB). These are lossy
-encodings of the existing software reconstruction, not newly captured console
+as a single 96 kbps Opus asset (84 KB). This is a lossy encoding of the existing software reconstruction, not newly captured console
 audio. Browser decoding runs independently of scene preparation. The existing
 Web Audio buffer scheduling preserves sound unlocking, muting and resume offsets.
 The synthesizer and original data stay in the repository for reproducibility;
 neither is downloaded by the normal playback path.
 
 The build generates the fixed normalization cubes, rough normal map, glow,
-plasma textures, unit spheres and prepared camera path in `opening.bin.gz` (131 KB). Reflected texture
+plasma textures, unit spheres and prepared camera path in `opening.bin.gz` (144 KB). Reflected texture
 planes are shared and integer predictors reduce download weight without losing
 any pixel values. The main sphere retains Float64 unit vectors so its original
 deformation remains unchanged. A worker expands these assets while the renderer
@@ -71,6 +71,8 @@ expands those from their compact, lossless representation instead.
 
 Normal playback creates only the opening scene before starting its clock. Then
 the finale module and prepared finale download concurrently with playback.
+Both workers use one document fetch/decompression path and receive transferred
+buffers; neither fetches JSON or generates source textures at runtime.
 The worker transfers its buffers and terminates. The renderer warms the finale
 in a 1×1 offscreen target to upload textures and compile shaders before the
 visible handoff. Still-frame previews at or after 5.25 seconds wait for the finale.
@@ -85,7 +87,12 @@ terminate the worker. If the finale cannot be prepared by 5.25 seconds, playback
 reveals the portfolio rather than showing an incomplete monogram. The full
 eight-second sequence plays when its assets are ready on time.
 
-To regenerate committed assets, use Node 24 and FFmpeg with libopus and AAC:
+The intro has one modern playback path: precomputed binary visuals, native gzip
+decompression, module workers and Opus audio. Browsers without native
+decompression or workers show the portfolio directly. A failed sound decode
+leaves the visual intro usable; it does not try another codec.
+
+To regenerate committed assets, use Node 24 and FFmpeg with libopus:
 
 ```sh
 npm run generate:splash-audio
@@ -132,6 +139,7 @@ on a physical phone.
 Controlled local tests used production builds on this Mac, a shared bandwidth
 limit per origin, 150 ms of added latency per asset request, gzip responses and
 `Cache-Control: no-store`. External Google Fonts were outside that throttle.
+These measurements are from PR #23, before the single-path cleanup.
 The measurement ends after the first rendered frame; it excludes the subsequent
 eight-second playback. These are lab comparisons, not physical-phone or field
 measurements.
@@ -151,8 +159,8 @@ and 5.89 s at 1 Mbps. These single samples should not be treated as field averag
 At 1 Mbps the DG finale was ready 2.37 seconds into playback, before the 5.25-second
 deadline. Matching screenshots at 3 and 7 seconds were pixel-identical at
 1280×720. The extracted crater distances, heights and texture values also match
-the previous implementation byte for byte. Browser checks verified Opus decoding,
-AAC fallback after an intentionally failed Opus request, and fail-open behavior
+the previous implementation byte for byte. Browser checks verified Opus decoding
+and fail-open behavior
 when the finale request was deliberately delayed by seven seconds.
 
 ## Source and attribution

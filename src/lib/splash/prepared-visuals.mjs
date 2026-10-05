@@ -34,6 +34,7 @@ export function restoreOpening({ metadata, arrays }) {
   return {
     textures,
     camera,
+    data: metadata.data,
     unit: {
       positions: Array.from(arrays.unit),
       indices: Array.from(arrays.unitIndices),

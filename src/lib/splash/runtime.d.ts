@@ -3,12 +3,13 @@ export function createSplash(
   domain: HTMLElement,
   options: {
     signal: AbortSignal;
-    opening?: {
+    opening: {
       textures: Record<string, Uint8Array[]>;
       camera: unknown;
+      data: unknown;
       unit: { positions: number[]; indices: number[] };
       smallUnit: { positions: Float32Array; indices: number[] };
-    } | null;
+    };
   },
 ): Promise<{
   render(time: number): void;
