@@ -5,20 +5,21 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: "rgba(13,109,1,1.0)",
+        // Palette shared with the splash: lime glow over near-black.
+        primary: "#a4ed51",
         background: {
-          DEFAULT: "rgba(28,28,28,1.0)",
-          dark: "#141414",
+          DEFAULT: "#0b0d0a",
+          dark: "#000000",
         },
         border: {
-          DEFAULT: "rgba(255, 255, 255, 0.06)",
+          DEFAULT: "rgba(232, 236, 230, 0.09)",
         },
         text: {
-          primary: "rgba(13,109,1,1.0)",
-          heading: "rgba(255, 255, 255, 0.75)",
-          subheading: "rgba(255, 255, 255, 0.65)",
-          body: "rgba(255, 255, 255, 0.6)",
-          description: "rgba(255, 234, 204, 0.4)",
+          primary: "#a4ed51",
+          heading: "#e8ece6",
+          subheading: "#c9d1c4",
+          body: "#a6b39c",
+          description: "#8f9a88",
         },
       },
       fontSize: {

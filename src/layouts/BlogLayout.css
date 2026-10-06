@@ -1,72 +1,87 @@
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  @apply mt-5 mb-3 font-bold text-text-heading font-softglyphs;
+/* Scoped under .article so these rules outrank Tailwind's preflight reset,
+   which otherwise flattens every heading to the body size. */
+.article h1,
+.article h2,
+.article h3,
+.article h4,
+.article h5,
+.article h6 {
+  @apply mt-10 mb-3 font-bold text-text-heading font-softglyphs leading-tight;
 }
 
-h1 {
+.article h1 {
   @apply text-4xl;
 }
-h2 {
+.article h2 {
   @apply text-3xl;
 }
-h3 {
+.article h3 {
   @apply text-2xl;
 }
-h4 {
+.article h4 {
   @apply text-xl;
 }
-h5 {
+.article h5 {
   @apply text-lg;
 }
-h6 {
+.article h6 {
   @apply text-base;
 }
 
-p,
-li {
-  @apply mb-3 text-text-body;
+.article p,
+.article li {
+  @apply mb-4 text-text-body leading-relaxed;
   font-family: "CQ Mono";
 }
 
-.content a {
-  color: darkturquoise;
+.article a {
+  @apply text-primary underline decoration-primary/40 underline-offset-4 transition-colors;
+}
+.article a:hover {
+  @apply decoration-primary;
 }
 
-ul,
-ol {
-  @apply ml-5 mb-3;
+.article ul,
+.article ol {
+  @apply ml-5 mb-4;
+}
+.article ul {
+  @apply list-disc;
+}
+.article ol {
+  @apply list-decimal;
+}
+.article li::marker {
+  @apply text-primary;
 }
 
-blockquote {
-  @apply my-5 pl-4 border-l-4 border-border;
+.article blockquote {
+  @apply my-6 pl-4 border-l-2 border-primary/60;
 }
 
-pre,
-code {
+.article pre,
+.article code {
   @apply font-mono rounded;
 }
 
-pre {
-  @apply p-3 overflow-x-auto border border-border;
+.article pre {
+  @apply my-6 p-4 overflow-x-auto border border-border;
 }
 
-code {
-  @apply px-1 py-0.5 text-sm text-primary;
+.article :not(pre) > code {
+  @apply px-1 py-0.5 text-sm text-primary bg-primary/10;
 }
 
-img {
-  @apply max-w-full h-auto;
+.article img,
+.article video {
+  @apply max-w-full h-auto my-6 rounded;
 }
 
-table {
-  @apply w-full border-collapse;
+.article table {
+  @apply w-full border-collapse my-6;
 }
 
-th,
-td {
-  @apply text-left p-2 border-b border-border;
+.article th,
+.article td {
+  @apply text-left p-2 border-b border-border text-text-body;
 }

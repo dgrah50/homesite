@@ -1,19 +1,57 @@
+---
+const links = [
+  { href: "/projects", label: "projects" },
+  { href: "/thoughts", label: "thoughts" },
+  { href: "/about", label: "about" },
+];
+const path = Astro.url.pathname.replace(/\/$/, "");
+---
+
 <header
-  class="header headline mx-4 md:mx-0 sticky top-2 mt-4 z-50 flex flex-row items-center justify-between rounded-xl hover:border-primary transition-all duration-500 text-text-body border-border border"
+  class="header headline mx-4 md:mx-0 sticky top-2 mt-4 z-50 flex flex-row items-center justify-between gap-4 rounded-xl hover:border-primary/40 transition-colors duration-500 text-text-body border-border border"
 >
-  <a href="/" class="text-sm font-thin p-4 -m-4">
-    <span class="text-white font-bold">dayan</span>grah.am
+  <a href="/" class="text-sm p-4 -m-4">
+    <span class="text-text-heading font-bold">dayan</span>grah.am
   </a>
-  <nav class="flex gap-4">
-    <a href="/projects" class="text-sm font-thin p-4 -m-4">projects</a>
-    <a href="/about" class="text-sm font-thin p-4 -m-4">about</a>
+  <nav class="flex gap-3 sm:gap-5">
+    {
+      links.map(({ href, label }) => (
+        <a
+          href={href}
+          class="nav-link text-sm p-4 -m-4"
+          aria-current={path.startsWith(href) ? "page" : undefined}
+        >
+          {label}
+        </a>
+      ))
+    }
   </nav>
 </header>
 
 <style>
-  .header {
-    background-color: rgba(28, 28, 28, 0.02);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px); /* For Safari */
+  /* Solid, with a mask over the strip above the sticky header so content
+     doesn't peek through as it scrolls. */
+  .header,
+  .header::before {
+    @apply bg-background;
+  }
+  .header::before {
+    content: "";
+    position: absolute;
+    inset: -1rem -1rem auto;
+    height: 1rem;
+    z-index: -1;
+  }
+  @media (min-width: 768px) {
+    .header::before {
+      inset: -1rem 0 auto;
+    }
+  }
+  .nav-link {
+    transition: color 150ms ease;
+  }
+  .nav-link:hover,
+  .nav-link[aria-current="page"] {
+    @apply text-primary;
   }
 </style>

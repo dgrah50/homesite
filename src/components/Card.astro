@@ -8,36 +8,32 @@ interface Props {
 const { href, title, body } = Astro.props;
 ---
 
-<a href={href} class="block">
-  <div
-    class="group w-[80vw] md:w-52 h-full rounded-lg shadow-sm hover:shadow-lg border border-border list-none p-2 text-text-body transition-all duration-500 hover:border-primary hover:text-white bg-background flex flex-col"
+<a
+  href={href}
+  class="card group flex flex-col h-full rounded-lg border border-border bg-background p-3 font-mono transition-all duration-300"
+>
+  <h3
+    class="text-sm text-text-subheading mb-2 transition-colors group-hover:text-primary group-focus-visible:text-primary"
   >
-    <h5 class="text-sm text-text-subheading mb-2 font-mono">
-      {title}
-      <span class="group-hover:ml-2 transition-all duration-300">&rarr;</span>
-    </h5>
-    <p
-      class="text-sm text-text-description text-wrap font-mono mt-auto flex-grow"
+    {title}
+    <span
+      class="inline-block ml-1 transition-transform duration-300 group-hover:translate-x-1"
+      aria-hidden="true">&rarr;</span
     >
-      {body}
-    </p>
-  </div>
+  </h3>
+  <p class="text-sm text-text-description">{body}</p>
 </a>
 
 <style>
-  li {
-    margin: 0;
-    font-size: 1.25rem;
-    transition: color 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  .card:hover,
+  .card:focus-visible {
+    outline: none;
+    border-color: rgba(164, 237, 81, 0.6);
   }
-  p {
-    margin-top: 0.25rem;
-    margin-bottom: 0;
-  }
-  li:is(:hover, :focus-within) {
-    background-position: 0;
-  }
-  li:is(:hover, :focus-within) h5 {
-    @apply text-primary;
+  @media (prefers-reduced-motion: reduce) {
+    .card,
+    .card * {
+      transition: none;
+    }
   }
 </style>

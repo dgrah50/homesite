@@ -7,12 +7,18 @@ interface Props {
 const { title, moreLink } = Astro.props;
 ---
 
-<section class="flex-col gap-4 mt-8 font-mono">
-  <h2 class="text-sm text-text-subheading mb-2">
-    >> {title}
-  </h2>
-  <div class="flex flex-col md:flex-row gap-4">
+<section class="w-full mt-10 font-mono">
+  <div class="flex items-baseline justify-between mb-3">
+    <h2 class="flex gap-2 text-sm text-text-subheading">
+      <span class="text-primary" aria-hidden="true">&gt;&gt;</span>
+      {title}
+    </h2>
+    <a
+      class="text-sm text-text-body hover:text-primary transition-colors"
+      href={moreLink}>more &rarr;</a
+    >
+  </div>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
     <slot />
-    <a class="text-text-body self-end text-sm" href={moreLink}>more &rarr;</a>
   </div>
 </section>
