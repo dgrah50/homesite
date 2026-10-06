@@ -35,16 +35,20 @@ const path = Astro.url.pathname.replace(/\/$/, "");
   .header::before {
     @apply bg-background;
   }
+  /* Offsets are from the padding box, so step outside the 1px border too. */
   .header::before {
     content: "";
     position: absolute;
-    inset: -1rem -1rem auto;
+    top: calc(-1rem - 1px);
+    left: calc(-1rem - 1px);
+    right: calc(-1rem - 1px);
     height: 1rem;
     z-index: -1;
   }
   @media (min-width: 768px) {
     .header::before {
-      inset: -1rem 0 auto;
+      left: -1px;
+      right: -1px;
     }
   }
   .nav-link {
