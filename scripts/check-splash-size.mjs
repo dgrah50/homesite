@@ -11,6 +11,7 @@ export const budgets = {
   finale: 160_000,
   audio: 85_000,
   javascript: 145_000,
+  wordmark: 2_000,
   total: 610_000,
 };
 
@@ -46,6 +47,14 @@ export function measureSplash(directory) {
       throw new Error(`Expected one built ${kind} asset.`);
     sizes[kind] = readFileSync(join(root, matches[0])).length;
   }
+  const wordmarks = files.filter(
+    (name) => name.startsWith("domain-xbox.") && name.endsWith(".svg"),
+  );
+  if (wordmarks.length !== 1)
+    throw new Error("Expected one built wordmark asset.");
+  sizes.wordmark = gzipSync(readFileSync(join(root, wordmarks[0])), {
+    level: 9,
+  }).length;
   sizes.total = Object.values(sizes).reduce((sum, bytes) => sum + bytes, 0);
   return sizes;
 }

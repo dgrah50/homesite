@@ -27,6 +27,9 @@ test("transfer audit counts shared imports and workers once and excludes unused 
     for (const [name, source] of Object.entries(modules))
       writeFileSync(join(root, name), source);
     writeFileSync(join(root, "unrelated.js"), "x".repeat(1_000_000));
+    const wordmark =
+      '<svg xmlns="http://www.w3.org/2000/svg"><path d="M0 0L1 1"/></svg>';
+    writeFileSync(join(root, "domain-xbox.hash.svg"), wordmark);
     for (const name of [
       "opening.bin.hash.gz",
       "retail-geometry.bin.hash.gz",
@@ -42,7 +45,8 @@ test("transfer audit counts shared imports and workers once and excludes unused 
         0,
       ),
     );
-    assert.equal(sizes.total, sizes.javascript + 40);
+    assert.equal(sizes.wordmark, gzipSync(wordmark, { level: 9 }).length);
+    assert.equal(sizes.total, sizes.javascript + sizes.wordmark + 40);
     assert.doesNotThrow(() => checkSplashSize(sizes));
   } finally {
     rmSync(directory, { recursive: true, force: true });

@@ -22,6 +22,7 @@ test("phone and desktop projections preserve the authored view without stretchin
     else assert.equal(frame.fov, 45);
     assert.ok(width * height * frame.pixelRatio ** 2 <= 2500000.001);
     assert.ok(frame.domainY > 0 && frame.domainY < height);
+    assert.ok(frame.domainWidth > 0 && frame.domainWidth < width - 48);
   }
 });
 

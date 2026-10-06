@@ -1,17 +1,17 @@
 import * as THREE from "three";
-import { clamp } from "./simulation.mjs";
 import { fissureMaterials } from "./fissure-material.mjs";
 import { CRATER_REVEAL_END } from "./fissure-transition.mjs";
 
-export function retailLogo(data, { custom, preparedField }) {
+export function retailLogo({ custom, preparedField }) {
   const scene = new THREE.Scene(),
     group = new THREE.Group();
   scene.add(group);
   const fissure = fissureMaterials(preparedField),
     materials = [],
     revealMeshes = [];
-  let text;
   for (const [name, a] of Object.entries(custom)) {
+    // The website address now supplies the single name below the monogram.
+    if (name === "text_0") continue;
     const geometry = new THREE.BufferGeometry();
     geometry.setAttribute(
       "position",
@@ -19,29 +19,18 @@ export function retailLogo(data, { custom, preparedField }) {
     );
     geometry.setIndex(a.indices);
     if (a.uv) geometry.setAttribute("uv", new THREE.BufferAttribute(a.uv, 2));
-    const material =
-      name === "text_0"
-        ? new THREE.MeshBasicMaterial({
-            color: new THREE.Color(98 / 255, 202 / 255, 19 / 255),
-            side: THREE.FrontSide,
-            depthTest: false,
-          })
-        : name.includes("interiorfloor")
-          ? fissure.floor
-          : name.includes("interior")
-            ? fissure.interior
-            : name.includes("lip")
-              ? fissure.lip
-              : fissure.surface;
+    const material = name.includes("interiorfloor")
+      ? fissure.floor
+      : name.includes("interior")
+        ? fissure.interior
+        : name.includes("lip")
+          ? fissure.lip
+          : fissure.surface;
     const mesh = new THREE.Mesh(geometry, material);
     mesh.frustumCulled = false;
     group.add(mesh);
     materials.push(material);
-    if (name === "text_0") {
-      text = mesh;
-      mesh.rotation.x = Math.PI / 2;
-      mesh.renderOrder = 2;
-    } else revealMeshes.push(mesh);
+    revealMeshes.push(mesh);
   }
   group.add(fissure.crater.mesh);
   materials.push(fissure.crater.material);
@@ -59,11 +48,6 @@ export function retailLogo(data, { custom, preparedField }) {
       fissure.update(t);
       for (const mesh of revealMeshes) mesh.visible = t < CRATER_REVEAL_END;
       group.visible = c.renderLogo;
-      text.visible = t >= 6;
-      const s = clamp((t - 6) / 0.25),
-        a = data.textAnimation[0],
-        b = data.textAnimation.at(-1);
-      text.position.set(...a.map((v, i) => v * (1 - s) + b[i] * s));
     },
   };
 }
