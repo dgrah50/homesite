@@ -121,7 +121,7 @@ export async function createSplash(canvas, domain, { signal, opening }) {
         import("./retail-logo.mjs"),
       ]).then(([{ study, field }, { retailLogo }]) => {
         if (disposed) return;
-        logo = retailLogo(data, {
+        logo = retailLogo({
           custom: study.logo,
           preparedField: field,
         });
@@ -172,7 +172,8 @@ export async function createSplash(canvas, domain, { signal, opening }) {
       camera.fov = frame.fov;
       camera.updateProjectionMatrix();
       domain.style.top = `${frame.domainY}px`;
-      domain.style.opacity = clamp((t - 6.5) / 0.3);
+      domain.style.width = `${frame.domainWidth}px`;
+      domain.style.opacity = clamp((t - 6) / 0.3);
       simulation.seek(t);
       deformSphere(unit.positions, simulation, deformed, normals);
       geometry.attributes.position.needsUpdate =

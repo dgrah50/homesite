@@ -21,6 +21,7 @@ export function splashFraming(width, height, time = 0, deviceRatio = 1) {
     aspect,
     fov,
     pixelRatio,
-    domainY: height / 2 + height * fit * zoom * 0.37,
+    domainY: height / 2 + height * fit * zoom * 0.18,
+    domainWidth: height * fit * zoom * 0.66,
   };
 }

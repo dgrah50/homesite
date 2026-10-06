@@ -1,6 +1,7 @@
 ---
 import geometryUrl from "../assets/splash/retail-geometry.bin.gz?url";
 import openingUrl from "../assets/splash/opening.bin.gz?url";
+import domainUrl from "../assets/splash/domain-xbox.svg?url&no-inline";
 ---
 
 <script is:inline define:vars={{ geometryUrl, openingUrl }}>
@@ -48,9 +49,9 @@ import openingUrl from "../assets/splash/opening.bin.gz?url";
     aria-label="Dayan Graham startup animation"
   >
     <canvas id="dg-splash-canvas" aria-hidden="true"></canvas>
-    <span id="dg-splash-domain" class="headline font-thin" aria-hidden="true"
-      ><span class="text-white font-bold">dayan</span>grah.am</span
-    >
+    <span id="dg-splash-domain" aria-hidden="true">
+      <img src={domainUrl} alt="dayangrah.am" width="16263" height="1125" />
+    </span>
     <div class="splash-actions">
       <button id="dg-splash-sound" type="button" aria-pressed="true">
         Sound on
@@ -94,14 +95,15 @@ import openingUrl from "../assets/splash/opening.bin.gz?url";
   }
   #dg-splash-domain {
     position: absolute;
-    left: 0;
-    width: 100%;
-    text-align: center;
-    transform: translateY(-50%);
-    font-size: clamp(16px, 1.8vw, 22px);
-    color: #ddd;
+    left: 50%;
+    transform: translate(-50%, -50%);
     opacity: 0;
     pointer-events: none;
+  }
+  #dg-splash-domain img {
+    display: block;
+    width: 100%;
+    height: auto;
   }
   .splash-actions {
     position: absolute;
