@@ -136,6 +136,12 @@ const displayTitle = ogTitle || title;
     min-height: 100dvh; /* Add dynamic viewport height */
   }
 
+  /* The splash hands focus to <main> for keyboard and screen-reader users;
+     it isn't interactive, so it shouldn't draw a focus ring. */
+  main[tabindex="-1"]:focus {
+    outline: none;
+  }
+
   .content {
     grid-area: content;
     width: 100%;
